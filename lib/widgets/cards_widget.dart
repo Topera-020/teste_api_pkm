@@ -70,36 +70,29 @@ class _CardWidgetState extends State<CardWidget> {
         backgroundColor = Colors.white.withOpacity(0.2);
     }
 
-    return Container(
-      
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Transform.translate(
-            offset: Offset(0.0, constraints.maxHeight * 0.7),
-            child: buildCardName(constraints),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Transform.translate(
+          offset: Offset(0.0, constraints.maxHeight * 0.7),
+          child: buildCardName(constraints),
+        ),
+      ],
     );
   }
 
 
   Widget buildCheckbox() {
-    IconData iconData;
     Color checkboxColor;
     switch (checkboxState) {
       case 1:
-        iconData = Icons.check;
         checkboxColor = Colors.green;
         break;
       case 2:
-        iconData = Icons.close;
         checkboxColor = Colors.red;
         break;
       default:
-        iconData = Icons.check;
         checkboxColor = Colors.green[100]!;
     }
 

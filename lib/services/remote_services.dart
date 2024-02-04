@@ -111,7 +111,7 @@ class RemoteService {
     Page pageCard = await fetchPage('cards', query: query, pageNumber: pageNumber);
     final List<Map<String, dynamic>> allCards = pageCard.data;
 
-    if (allCards == null || allCards.isEmpty) {
+    if (allCards.isEmpty) {
       print('No data available.');
       return null;
     }
