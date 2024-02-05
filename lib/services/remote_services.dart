@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_print
 
+import 'package:teste_api/models/card_models.dart';
 import 'package:teste_api/models/collections_models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:teste_api/models/page_models.dart';
 
 class RemoteService {
   final http.Client _client = http.Client();

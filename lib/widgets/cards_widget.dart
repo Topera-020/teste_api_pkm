@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:teste_api/models/collections_models.dart';
+import 'package:teste_api/models/card_models.dart';
 
 class CardWidget extends StatefulWidget {
   final PokemonCard pokemonCard;
@@ -29,7 +29,7 @@ class _CardWidgetState extends State<CardWidget> {
               children: [
                 Center(
                   child: Image.network(
-                    widget.pokemonCard.images.small ?? '',
+                    widget.pokemonCard.small,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -58,16 +58,12 @@ class _CardWidgetState extends State<CardWidget> {
   }
 
   Widget buildCardInfo(BuildContext context, BoxConstraints constraints) {
-    Color backgroundColor;
     switch (checkboxState) {
       case 1:
-        backgroundColor = Colors.green.withOpacity(0.5);
         break;
       case 2:
-        backgroundColor = Colors.red.withOpacity(0.5);
         break;
       default:
-        backgroundColor = Colors.white.withOpacity(0.2);
     }
 
     return Row(

@@ -47,7 +47,7 @@ class SetsCardWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(constraints.maxWidth / 10),
         child: Image.network(
-          collection.images.logo ?? '',
+          collection.logo,
           height: constraints.maxHeight * 0.4,
         ),
       ),
@@ -67,7 +67,7 @@ class SetsCardWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(constraints.maxWidth / 20),
       child: Image.network(
-        collection.images.symbol ?? '',
+        collection.symbol,
         width: constraints.maxWidth / 5,
         height: constraints.maxHeight / 5,
       ),

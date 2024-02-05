@@ -1,11 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:teste_api/models/card_models.dart';
 import 'package:teste_api/widgets/app_bar_widget.dart';
 import 'package:teste_api/widgets/cards_widget.dart';
-import 'package:teste_api/models/collections_models.dart';
 import 'package:teste_api/services/remote_services.dart';
-import 'package:teste_api/widgets/drawer_widget.dart';
 
 class CardPage extends StatefulWidget {
   final String? setId;
@@ -25,7 +24,7 @@ class CardPageState extends State<CardPage> {
   int currentPage = 1;
   bool isLoading = false;
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {

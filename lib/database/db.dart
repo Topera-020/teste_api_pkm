@@ -1,4 +1,3 @@
-import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -30,8 +29,8 @@ class DB {
     await db.execute(_energyNames);
     await db.execute(_cardsImages);
     await db.execute(_cardsArtImages);
-    await db.execute(_sets);
-    await db.execute(_colection);
+    await db.execute(_colections);
+    await db.execute(_owned);
     await db.execute(_tags);
     await db.execute(_typesImages);
   }
@@ -88,7 +87,7 @@ class DB {
         )
     ''';
     
-    String get _sets => '''
+    String get _colections => '''
         CREATE TABLE IF NOT EXISTS Sets (
             id TEXT PRIMARY KEY,
             set_name TEXT,
@@ -103,7 +102,7 @@ class DB {
         )
     ''';
 
-    String get _colection => '''
+    String get _owned => '''
         CREATE TABLE IF NOT EXISTS Colection (
             id TEXT PRIMARY KEY,
             Temos BOOLEAN,

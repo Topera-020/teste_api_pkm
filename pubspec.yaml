@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.1.2
   css_colors: ^1.1.4
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
