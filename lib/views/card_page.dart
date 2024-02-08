@@ -2,20 +2,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:teste_api/models/card_models.dart';
+import 'package:teste_api/models/collections_models.dart';
 import 'package:teste_api/widgets/app_bar_widget.dart';
 import 'package:teste_api/widgets/cards_widget.dart';
 import 'package:teste_api/services/remote_services.dart';
 
-class CardPage extends StatefulWidget {
-  final String? setId;
 
-  const CardPage({Key? key, this.setId}) : super(key: key);
+class CardPage extends StatefulWidget {
+  final Collection? collection;
+
+  const CardPage({Key? key, this.collection}) : super(key: key);
 
   @override
-  CardPageState createState() => CardPageState();
+  CardPageState get createState => CardPageState();
 }
 
+
 class CardPageState extends State<CardPage> {
+
   bool hasMoreData = true; 
   late Future<List<PokemonCard>?> pokemonCardsFuture;
   TextEditingController searchController = TextEditingController();
@@ -41,7 +45,7 @@ class CardPageState extends State<CardPage> {
       print('loading');
     });
 
-    final List<PokemonCard>? cards = await RemoteService().getCards(query: 'set.id:${widget.setId ?? 'xy'}', pageNumber: page);
+    final List<PokemonCard>? cards = await RemoteService().getCards(query: 'set.id:${widget.collection?.id ?? 'xy'}', pageNumber: page);
 
     print('OLHA ISSO $cards');
     setState(() {
@@ -101,7 +105,7 @@ class CardPageState extends State<CardPage> {
             searchController.text = value;
           });
         },
-        title: widget.setId!,
+        title: widget.collection?.name ?? 'ERRO',
       ),
       
       body: FutureBuilder<List<PokemonCard>?>(

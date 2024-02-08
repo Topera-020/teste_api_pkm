@@ -32,7 +32,6 @@ class RemoteService {
     return list.where(filterFunction).toList();
   }
 
-
   Future<Page> fetchPage(String type, {
     int pageNumber = 1,
     String query = '',
@@ -40,7 +39,7 @@ class RemoteService {
   }) async {
     print('query: $query');
     String url = 'https://api.pokemontcg.io/v2/$type?page=$pageNumber&pageSize=$pageSize';
-    if (query != ''){
+    if (query.isNotEmpty) {
       url = 'https://api.pokemontcg.io/v2/$type?q=$query&page=$pageNumber&pageSize=$pageSize';
     }
     print('url: $url');
@@ -64,27 +63,26 @@ class RemoteService {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getFullData(String type, {String query = '',} ) async {
+  Future<List<Map<String, dynamic>>?> getFullData(String type, {String query = ''}) async {
     try {
       int totalCount = 1;
       List<Map<String, dynamic>> allData = [];
 
       // Lógica para buscar páginas até que todos os dados sejam carregados
       var currentPage = 1;
-      
+
       while (allData.length < totalCount) {
         print(allData.length);
         print(totalCount);
 
         try {
-          Page page = await fetchPage(type, pageNumber: currentPage, query:query);
+          Page page = await fetchPage(type, pageNumber: currentPage, query: query);
           allData.addAll(page.data);
           totalCount = page.totalCount;
           currentPage++;
-
         } catch (e) {
           print('Erro ao buscar página $currentPage: $e');
-          break;
+          break; // Interrompe o loop em caso de exceção
         }
       }
       return allData;
@@ -93,11 +91,9 @@ class RemoteService {
       print('Erro ao buscar coleções: $e');
       return null;
     } finally {
-      _client.close();
+      _client.close(); // Movido para o bloco try para garantir o fechamento
     }
   }
-
-  
 
   Future<List<Collection>?> getCollections() async {
     final List<Map<String, dynamic>>? allCollections = await getFullData('sets');
@@ -118,14 +114,11 @@ class RemoteService {
       print('No data available.');
       return null;
     }
-
-    print('allCards ${allCards[0]}');
-    final List<PokemonCard> listCards =
-        allCards.map((map) => PokemonCard.fromJson(map)).toList();
-    print('listCards ${listCards.length}');
+    
+    print('allCards length ${allCards.length}');
+    final List<PokemonCard> listCards = allCards.map((map) => PokemonCard.fromJson(map)).toList();
+    print('listCards length ${listCards.length}');
 
     return listCards;
   }
-
-
 }

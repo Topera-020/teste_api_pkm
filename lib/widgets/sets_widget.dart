@@ -47,7 +47,7 @@ class SetsCardWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(constraints.maxWidth / 10),
         child: Image.network(
-          collection.logo,
+          collection.logoImg,
           height: constraints.maxHeight * 0.4,
         ),
       ),
@@ -67,7 +67,7 @@ class SetsCardWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(constraints.maxWidth / 20),
       child: Image.network(
-        collection.symbol,
+        collection.symbolImg,
         width: constraints.maxWidth / 5,
         height: constraints.maxHeight / 5,
       ),
@@ -92,7 +92,7 @@ Widget buildInkWell(BuildContext context) {
     onTap: () {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => CardPage(setId: collection.id),
+          builder: (context) => CardPage(collection: collection),
         ),
       );
 

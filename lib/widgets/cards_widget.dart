@@ -12,7 +12,7 @@ class CardWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CardWidgetState createState() => _CardWidgetState();
+  _CardWidgetState get createState => _CardWidgetState();
 }
 
 class _CardWidgetState extends State<CardWidget> {
@@ -29,7 +29,7 @@ class _CardWidgetState extends State<CardWidget> {
               children: [
                 Center(
                   child: Image.network(
-                    widget.pokemonCard.small,
+                    widget.pokemonCard.smallImg!,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -111,7 +111,7 @@ class _CardWidgetState extends State<CardWidget> {
             
           ),
           child: checkboxState == 1
-              ? Icon(
+              ? const Icon(
                   Icons.check,
                   color: Colors.white,
                   size: 20.0,
@@ -140,7 +140,7 @@ class _CardWidgetState extends State<CardWidget> {
       
       width: constraints.maxWidth,
       color: textColor,
-      padding: EdgeInsets.fromLTRB(15, 0.6, 2, 0.6),
+      padding: const EdgeInsets.fromLTRB(15, 0.6, 2, 0.6),
       child: Text(
         '${widget.pokemonCard.number} - ${widget.pokemonCard.name}',
         maxLines: 3,

@@ -6,8 +6,8 @@ class Collection {
   int total;
   String ptcgoCode;
   String releaseDate;
-  String symbol;
-  String logo;
+  String symbolImg;
+  String logoImg;
 
   Collection({
     required this.id,
@@ -17,8 +17,8 @@ class Collection {
     required this.total,
     required this.ptcgoCode,
     required this.releaseDate,
-    required this.symbol,
-    required this.logo,
+    required this.symbolImg,
+    required this.logoImg,
   });
 
   factory Collection.fromJson(Map<String, dynamic> json) => Collection(
@@ -29,8 +29,8 @@ class Collection {
         total: json["total"],
         ptcgoCode: json["ptcgoCode"].toString(),
         releaseDate: json["releaseDate"].toString(),
-        symbol: json["images."]["symbol"],
-        logo: json["images"]["logo"]
+        symbolImg: json["images"]["symbol"],
+        logoImg: json["images"]["logo"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -41,8 +41,8 @@ class Collection {
         "total": total,
         "ptcgoCode": ptcgoCode,
         "releaseDate": releaseDate,
-        "symbol": symbol,
-        "logo": logo,
+        "symbolImg": symbolImg,
+        "logoImg": logoImg,
       }; 
 
   factory Collection.fromDB(Map<String, dynamic> data) {
@@ -54,8 +54,8 @@ class Collection {
       total: data['total'],
       ptcgoCode: data['ptcgoCode'],
       releaseDate: data['releaseDate'],
-      symbol: data['Symbol'],
-      logo: data['Logo'], 
+      symbolImg: data['Symbol'],
+      logoImg: data['Logo'], 
       
     );
 
