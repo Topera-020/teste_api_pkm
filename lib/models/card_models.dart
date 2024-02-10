@@ -26,8 +26,33 @@ class PokemonCard {
     );
   }
 
+
+  factory PokemonCard.fromMap(Map<String, dynamic> map) {
+    return PokemonCard(
+      id: map['id'],
+      name: map['name'] ?? '',
+      number: map['number'] ?? '',
+      setId: map['setId'],
+      smallImg: map['smallImg'],
+      largeImg: map['largeImg'],
+    );
+  }
+
+  // Método para converter um objeto PokemonCard em um mapa
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'number': number,
+      'setId': setId,
+      'smallImg': smallImg,
+      'largeImg': largeImg,
+    };
+  }
+
   @override
   String toString() {
     return 'PokemonCard(id: $id, name: $name, number: $number, setId: $setId)';
   }
+  
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teste_api/views/home_page.dart';
-import 'package:teste_api/views/card_page.dart';
+import 'package:teste_api/pages/home_page.dart';
+import 'package:teste_api/pages/card_page.dart';
 
 void main() {
   runApp(const MyApp());
