@@ -1,59 +1,43 @@
-class Pokemon {
+class PokedexEntry {
   final int id;
-  final String name;
+  final int pokedexNumber;
+  final String? evolvesFromSpecies;
+  final String name; // Variedade
   final bool isDefault;
   final int height;
   final int weight;
-  final List<Form> forms;
   final List<String> types;
+  final bool isBaby;
+  final bool isLegendary;
+  final bool isMythical;
+  final List<String>? varieties; 
+  final String officialArtwork; 
+  final String? shiny;
+  final String? female; 
+  final String? shinyFemale;
 
-  Pokemon({
+  
+
+  PokedexEntry({
     required this.id,
+    required this.pokedexNumber,
+    required this.evolvesFromSpecies,
     required this.name,
+    required this.isDefault,
     required this.height,
     required this.weight,
-    required this.isDefault,
-    required this.forms,
     required this.types,
+    required this.isBaby,
+    required this.isLegendary,
+    required this.isMythical,
+    required this.officialArtwork, 
+     this.varieties,
+     this.shiny, 
+     this.female, 
+     this.shinyFemale,
   });
 
-  factory Pokemon.fromJson(Map<String, dynamic> json) {
-    List<Form> formsList = [];
-
-    if (json.containsKey('forms') && (json['forms'] as List<dynamic>).length > 1) {
-      formsList.addAll((json['forms'] as List<dynamic>).map((form) => Form.fromJson(form)).toList());
-    }
-
-    if (json['sprites']['other']['home'] != null) {
-      formsList.addAll((json['sprites']['other']['home'] as List<dynamic>)
-          .map((form) => Form.fromJson(form))
-          .toList());
-    }
-
-    return Pokemon(
-      id: json['id'],
-      name: json['name'],
-      height: json['height'],
-      weight: json['weight'],
-      forms: formsList,
-      types: (json['types'] as List<dynamic>)
-          .map((type) => type['name'].toString())
-          .toList(),
-      isDefault: json['is_default'],
-    );
-  }
 }
 
-class Form {
-  final String name;
-  final String url;
 
-  Form({required this.name, required this.url});
 
-  factory Form.fromJson(Map<String, dynamic> json) {
-    return Form(
-      name: json['name'],
-      url: json['url'],
-    );
-  }
-}

@@ -22,6 +22,7 @@ class DB {
     await db.execute(_typesImages);
     await db.execute(_tags);
     await db.execute(_configurations);
+    await db.execute(_pokedex);
   }
 
   String get _pokemonCards => '''
@@ -58,16 +59,7 @@ class DB {
     ''';
   String get _pokedex => '''
         CREATE TABLE IF NOT EXISTS Pokedex (
-            id TEXT PRIMARY KEY,
-            set_name TEXT,
-            series TEXT, 
-            printedTotal INT, 
-            total INT, 
-            ptcgoCode TEXT, 
-            releaseDate TEXT, 
-            liga TEXT, 
-            symbol TEXT, 
-            logo TEXT
+            
         );
     ''';
 

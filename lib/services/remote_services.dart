@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:teste_api/models/page_models.dart';
-import 'package:teste_api/models/pokedex_page_models.dart';
+import 'package:teste_api/models/pokedex_list_models.dart';
+import 'package:teste_api/models/pokedex_models.dart';
 
 class RemoteService {
   final http.Client _client = http.Client();
@@ -33,25 +34,13 @@ class RemoteService {
     return list.where(filterFunction).toList();
   }
 
-  Future<Page> fetchPage(String type, {
-    int pageNumber = 1,
-    String query = '',
-    int pageSize = 21,
-  }) async {
-    print('query: $query');
-    String url = 'https://api.pokemontcg.io/v2/$type?page=$pageNumber&pageSize=$pageSize';
-    if (query.isNotEmpty) {
-      url = 'https://api.pokemontcg.io/v2/$type?q=$query&page=$pageNumber&pageSize=$pageSize';
-    }
-    print('url: $url');
+  Future<Map<String, dynamic>> fetch(String url) async {
     final Uri uri = Uri.parse(url);
     try {
       final http.Response response = await _client.get(uri);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        print('jsonResponse $jsonResponse');
-        return Page.fromJson(jsonResponse);
+        return jsonDecode(response.body);
       } else {
         // Se houver um erro na resposta, lance uma exceção para indicar o problema
         throw Exception('Erro na requisição: ${response.statusCode}');
@@ -64,46 +53,33 @@ class RemoteService {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getFullData(String type, {String query = ''}) async {
-    try {
-      int totalCount = 1;
-      List<Map<String, dynamic>> allData = [];
-
-      // Lógica para buscar páginas até que todos os dados sejam carregados
-      var currentPage = 1;
-
-      while (allData.length < totalCount) {
-        print(allData.length);
-        print(totalCount);
-
-        try {
-          Page page = await fetchPage(type, pageNumber: currentPage, query: query);
-          allData.addAll(page.data);
-          totalCount = page.totalCount;
-          currentPage++;
-        } catch (e) {
-          print('Erro ao buscar página $currentPage: $e');
-          break; // Interrompe o loop em caso de exceção
-        }
-      }
-      return allData;
-    } catch (e) {
-      // Trate as exceções de maneira adequada
-      print('Erro ao buscar coleções: $e');
-      return null;
-    } finally {
-      _client.close(); // Movido para o bloco try para garantir o fechamento
+  Future<Page> fetchPage(String type, {
+    int pageNumber = 1,
+    String query = '',
+    int pageSize = 21,
+  }) async {
+    String url = 'https://api.pokemontcg.io/v2/$type?page=$pageNumber&pageSize=$pageSize';
+    if (query.isNotEmpty) {
+      url = 'https://api.pokemontcg.io/v2/$type?q=$query&page=$pageNumber&pageSize=$pageSize';
     }
+    return Page.fromJson(await fetch(url) as Map<String, dynamic>);
   }
 
   Future<List<Collection>?> getCollections() async {
-    final List<Map<String, dynamic>>? allCollections = await getFullData('sets');
-    if (allCollections == null) {
-      return null;
-    } else {
-      final List<Collection> listCollection =
-          allCollections.map((map) => Collection.fromJson(map)).toList();
+    try {
+      Page pageCollections = await fetchPage('sets', pageSize: 1000);
+      final List<Map<String, dynamic>> allCollections = pageCollections.data;
+
+      if (allCollections.isEmpty) {
+        print('No data available. (Collections)');
+        return null;
+      }
+      final List<Collection> listCollection = allCollections.map((map) => Collection.fromJson(map)).toList();
+
       return listCollection;
+    } catch (e) {
+      print('Erro ao buscar coleções: $e');
+      return null;
     }
   }
 
@@ -115,7 +91,7 @@ class RemoteService {
       print('No data available.');
       return null;
     }
-    
+
     print('allCards length ${allCards.length}');
     final List<PokemonCard> listCards = allCards.map((map) => PokemonCard.fromJson(map)).toList();
     print('listCards length ${listCards.length}');
@@ -133,32 +109,92 @@ class RemoteService {
     return page.totalCount;
   }
 
-
-
-  Future<PkDxPage> fetchPokedexList({
+  Future<List<String>> fetchPokemonSpeciesUrls({
     int offset = 0,
     int limit = 10000,
   }) async {
-    String url = 'https://pokeapi.co/api/v2/pokemon?limit=$limit&offset=$offset';
-    print('url: $url');
+    //Pega todas as espécies de pokemon e retorna uma lista com os urls
+    String url = 'https://pokeapi.co/api/v2/pokemon-species?limit=$limit&offset=$offset';
+    PokemonSpeciesList pokemonSpeciesList =
+        PokemonSpeciesList.fromJson(await fetch(url) as Map<String, dynamic>);
+    return pokemonSpeciesList.urls;
+  }
 
-    final Uri uri = Uri.parse(url);
+  Future<List<PokedexEntry>> fetchPokedexEntryList() async {
+    List<PokedexEntry> pokedexEntries = [];
+
     try {
-      final http.Response response = await _client.get(uri);
+      List<String> pokemonSpeciesUrls = await fetchPokemonSpeciesUrls();
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        print('jsonResponse $jsonResponse');
-        return PkDxPage.fromJson(jsonResponse);
-      } else {
-        // Se houver um erro na resposta, lance uma exceção para indicar o problema
-        throw Exception('Erro na requisição: ${response.statusCode}');
+      for (String speciesUrl in pokemonSpeciesUrls) {
+        try {
+          Map<String, dynamic> speciesJson = await fetch(speciesUrl);
+          // speciesJson - página da espécie do pokemon {id(pokedexNumber), baby, legendary, mythical, varieties, genderDif}
+
+          if (speciesJson.containsKey('varieties') && speciesJson['varieties'] is List) {
+            List<String> varietiesUrls = speciesJson['varieties']
+                .map<String>((map) => map["pokemon"]["url"])
+                .toList(); // Pega a lista de URLs com as Variedades de determinado pokemon
+
+            for (String variationUrl in varietiesUrls) {
+              try {
+                Map<String, dynamic> variationJson = await fetch(variationUrl);
+                if (variationJson.containsKey('types') && variationJson['types'] is List) {
+                  List<String> types = variationJson["types"]
+                      .map<String>((type) => type["type"]["name"])
+                      .toList();
+                  List<String> varieties = variationJson['varieties']
+                      .where((variation) => variation["is_default"] == false)
+                      .map<String>((variation) => variation["pokemon"]["name"])
+                      .toList();
+
+                  PokedexEntry entry = PokedexEntry(
+                    // Características que vêm da página de Variação (/Pokemon/)
+                    id: variationJson['id'],
+                    name: variationJson['name'],
+                    height: variationJson['height'],
+                    weight: variationJson['weight'],
+                    isDefault: variationJson['is_default'],
+                    types: types,
+                    officialArtwork: variationJson['sprites']['other']['official-artwork']['front_default'],
+                    shiny: variationJson['sprites']['other']['official-artwork']['front_shiny'],
+
+                    // Características que vêm da página de Espécie (/Pokemon-species/)
+                    pokedexNumber: speciesJson['id'],
+                    isBaby: speciesJson['is_baby'],
+                    isLegendary: speciesJson['is_legendary'],
+                    isMythical: speciesJson['is_mythical'],
+                    evolvesFromSpecies: speciesJson['evolves_from_species'] != null
+                        ? speciesJson['evolves_from_species']['name']
+                        : null,
+                    varieties: varieties, // lista com o nome das variedades
+                    female: variationJson['sprites']['other']['home']['front_female'],
+                    shinyFemale: variationJson['sprites']['other']['home']['front_shiny_female'],
+                  );
+
+                  pokedexEntries.add(entry);
+                } else {
+                  print('Erro: Variante sem tipos definidos.');
+                }
+              } catch (e) {
+                print('Erro ao processar variação: $e');
+              }
+            }
+          } else {
+            print('Erro: Espécie sem variedades definidas.');
+          }
+        } catch (e) {
+          print('Erro ao processar espécie: $e');
+        }
       }
     } catch (e) {
-      // Captura exceções durante a requisição
-      print('Erro ao buscar página: $e');
-      // Re-lança a exceção para que a chamada da função possa lidar com isso, se necessário
-      rethrow;
+      print('Erro ao buscar URLs das espécies: $e');
     }
+
+    return pokedexEntries;
+  }
+
+  void dispose() {
+    _client.close();
   }
 }
