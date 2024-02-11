@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:teste_api/models/page_models.dart';
+import 'package:teste_api/models/pokedex_page_models.dart';
 
 class RemoteService {
   final http.Client _client = http.Client();
@@ -120,5 +121,44 @@ class RemoteService {
     print('listCards length ${listCards.length}');
 
     return listCards;
+  }
+
+  Future<int> getQuantidadeDeCartas() async {
+    Page page = await fetchPage('cards', pageSize: 1);
+    return page.totalCount;
+  }
+
+  Future<int> getQuantidadeDeSets() async {
+    Page page = await fetchPage('sets', pageSize: 1);
+    return page.totalCount;
+  }
+
+
+
+  Future<PkDxPage> fetchPokedexList({
+    int offset = 0,
+    int limit = 10000,
+  }) async {
+    String url = 'https://pokeapi.co/api/v2/pokemon?limit=$limit&offset=$offset';
+    print('url: $url');
+
+    final Uri uri = Uri.parse(url);
+    try {
+      final http.Response response = await _client.get(uri);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print('jsonResponse $jsonResponse');
+        return PkDxPage.fromJson(jsonResponse);
+      } else {
+        // Se houver um erro na resposta, lance uma exceção para indicar o problema
+        throw Exception('Erro na requisição: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Captura exceções durante a requisição
+      print('Erro ao buscar página: $e');
+      // Re-lança a exceção para que a chamada da função possa lidar com isso, se necessário
+      rethrow;
+    }
   }
 }

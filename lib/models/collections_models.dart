@@ -30,39 +30,38 @@ class Collection {
         ptcgoCode: json["ptcgoCode"].toString(),
         releaseDate: json["releaseDate"].toString(),
         symbolImg: json["images"]["symbol"],
-        logoImg: json["images"]["logo"]
+        logoImg: json["images"]["logo"],
       );
 
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "series": series,
-        "printedTotal": printedTotal,
-        "total": total,
-        "ptcgoCode": ptcgoCode,
-        "releaseDate": releaseDate,
-        "symbolImg": symbolImg,
-        "logoImg": logoImg,
-      }; 
+  factory Collection.fromDB(Map<String, dynamic> data) => Collection(
+        id: data['id'],
+        name: data['set_name'],
+        series: data['series'],
+        printedTotal: data['printedTotal'],
+        total: data['total'],
+        ptcgoCode: data['ptcgoCode'],
+        releaseDate: data['releaseDate'],
+        symbolImg: data['symbolImg'],
+        logoImg: data['logoImg'],
+      );
 
-  factory Collection.fromDB(Map<String, dynamic> data) {
-    return Collection(
-      id: data['id'],
-      name: data['set_name'],
-      series: data['series'],
-      printedTotal: data['printedTotal'],
-      total: data['total'],
-      ptcgoCode: data['ptcgoCode'],
-      releaseDate: data['releaseDate'],
-      symbolImg: data['Symbol'],
-      logoImg: data['Logo'], 
-      
-    );
-
-}
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'set_name': name,
+      'series': series,
+      'printedTotal': printedTotal,
+      'total': total,
+      'ptcgoCode': ptcgoCode,
+      'releaseDate': releaseDate,
+      'symbolImg': symbolImg,
+      'logoImg': logoImg,
+    };
+  }
 }
 
-class Legalities {
+
+/* class Legalities {
   bool unlimited;
   bool standard;
   bool expanded;
@@ -86,3 +85,4 @@ class Legalities {
       };
 }
 
+*/

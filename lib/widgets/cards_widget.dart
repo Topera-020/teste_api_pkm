@@ -12,10 +12,10 @@ class CardWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CardWidgetState get createState => _CardWidgetState();
+  CardWidgetState get createState => CardWidgetState();
 }
 
-class _CardWidgetState extends State<CardWidget> {
+class CardWidgetState extends State<CardWidget> {
   int checkboxState = 0; // 0 - Branco, 1 - Verde, 2 - Vermelho
 
   @override
