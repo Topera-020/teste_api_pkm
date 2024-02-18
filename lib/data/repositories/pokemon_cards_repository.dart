@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:teste_api/data/database.dart';
-import 'package:teste_api/models/card_models.dart';
+import 'package:pokelens/data/database.dart';
+import 'package:pokelens/models/card_models.dart';
 
 class PokemonRepository {
   late Database _db;

@@ -1,8 +1,8 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:teste_api/models/collections_models.dart';
-import 'package:teste_api/pages/card_page.dart';
+import 'package:pokelens/models/collections_models.dart';
+import 'package:pokelens/pages/card_page.dart';
 
 class SetsCardWidget extends StatelessWidget {
   final Collection collection;

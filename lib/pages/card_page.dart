@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:teste_api/models/card_models.dart';
-import 'package:teste_api/models/collections_models.dart';
-import 'package:teste_api/widgets/app_bar_widget.dart';
-import 'package:teste_api/widgets/cards_widget.dart';
-import 'package:teste_api/services/remote_services.dart';
+import 'package:pokelens/models/card_models.dart';
+import 'package:pokelens/models/collections_models.dart';
+import 'package:pokelens/widgets/app_bar_widget.dart';
+import 'package:pokelens/widgets/cards_widget.dart';
+import 'package:pokelens/services/remote_services.dart';
 
 
 class CardPage extends StatefulWidget {

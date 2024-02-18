@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:teste_api/models/card_models.dart';
+import 'package:pokelens/models/card_models.dart';
 
 class CardWidget extends StatefulWidget {
   final PokemonCard pokemonCard;

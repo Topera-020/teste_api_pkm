@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:teste_api/data/repositories/colections_repository.dart';
-import 'package:teste_api/data/repositories/pokemon_cards_repository.dart';
-import 'package:teste_api/services/remote_services.dart';
+import 'package:pokelens/data/repositories/colections_repository.dart';
+import 'package:pokelens/data/repositories/pokemon_cards_repository.dart';
+import 'package:pokelens/services/remote_services.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({Key? key}) : super(key: key);

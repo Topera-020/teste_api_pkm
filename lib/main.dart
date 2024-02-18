@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:teste_api/pages/home_page.dart';
-import 'package:teste_api/pages/card_page.dart';
-import 'package:teste_api/data/database.dart';
+import 'package:pokelens/pages/home_page.dart';
+import 'package:pokelens/pages/card_page.dart';
+import 'package:pokelens/data/database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

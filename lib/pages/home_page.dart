@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teste_api/widgets/app_bar_widget.dart';
-import 'package:teste_api/widgets/sets_widget.dart';
-import 'package:teste_api/models/collections_models.dart';
-import 'package:teste_api/services/remote_services.dart';
-import 'package:teste_api/widgets/drawer_widget.dart';
+import 'package:pokelens/widgets/app_bar_widget.dart';
+import 'package:pokelens/widgets/sets_widget.dart';
+import 'package:pokelens/models/collections_models.dart';
+import 'package:pokelens/services/remote_services.dart';
+import 'package:pokelens/widgets/drawer_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

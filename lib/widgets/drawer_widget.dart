@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teste_api/pages/settings_page.dart';
+import 'package:pokelens/pages/settings_page.dart';
 
 
 class DrawerWidget extends StatelessWidget {
