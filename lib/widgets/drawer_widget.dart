@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pokelens/pages/settings_page.dart';
-
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  const DrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +9,11 @@ class DrawerWidget extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.red[700],
+              color: Color.fromARGB(255, 4, 60, 60),
             ),
-            child: const Text(
+            child: Text(
               'Menu',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -65,7 +63,7 @@ class DrawerWidget extends StatelessWidget {
               title: const Text('Listas Pessoais'),
               onTap: () {
                 Navigator.pop(context); // Fecha o Drawer
-                // Adicione a lógica ou navegação necessária para Listas Pessoais aqui
+                Navigator.pushNamed(context, '/loading'); 
               },
             ),
 
@@ -73,8 +71,8 @@ class DrawerWidget extends StatelessWidget {
               leading: const Icon(Icons.bar_chart), // Ícone de gráfico de barras para representar Estatísticas
               title: const Text('Estatísticas'),
               onTap: () {
-                Navigator.pop(context); // Fecha o Drawer
-                // Adicione a lógica ou navegação necessária para Estatísticas aqui
+                Navigator.pop(context); 
+                Navigator.pushNamed(context, '/test'); 
               },
             ),
 
@@ -82,11 +80,8 @@ class DrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Configurações'),
             onTap: () {
-              Navigator.pop(context); // Fecha o Drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()), // Substituído InfoPage por SettingsPage
-              );
+              Navigator.pop(context); 
+              Navigator.pushNamed(context, '/settings'); 
             },
           ),
         ],

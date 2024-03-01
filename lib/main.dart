@@ -1,44 +1,46 @@
 import 'package:flutter/material.dart';
-
-import 'package:pokelens/pages/home_page.dart';
 import 'package:pokelens/pages/card_page.dart';
-import 'package:pokelens/data/database.dart';
+import 'package:pokelens/pages/collections_page.dart';
+import 'package:pokelens/pages/loading_page.dart';
+import 'package:pokelens/pages/settings_page.dart';
+import 'package:pokelens/pages/test_page.dart';
+
+//import 'package:pokelens/pages/test_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await DB.instance.database;
-
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      title: 'Teste API',
+      title: 'PokéLens',
       theme: ThemeData(
-        primaryColor: Colors.red[700], // Defina a cor principal desejada
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.red[700], // Defina a cor de fundo da AppBar
-          titleTextStyle: const TextStyle(
+        primaryColor: const Color.fromARGB(255, 6, 131, 130), // Defina a cor principal desejada
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 6, 131, 130), // Defina a cor de fundo da AppBar
+          titleTextStyle: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20.0,
           ),
-          iconTheme: const IconThemeData(
+          iconTheme: IconThemeData(
             color: Colors.white, // Defina a cor dos ícones na AppBar
           ),
         ),
       ),
-
       initialRoute: '/',
       routes: {
-        '/': (_) => const HomePage(),
-        '/cardsPage': (context) => const CardPage(collection: null,),
+        '/': (_) => const CollectionsPage(),
+        '/loading': (_) => const LoadingPage(),
+        '/cardsPage': (context) => const CardPage(collection: null),
+        '/collectionsPage': (context) => const CollectionsPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/test': (_) => const TestPage(),
       },
     );
   }

@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'package:pokelens/models/card_models.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,6 +7,7 @@ import 'dart:convert';
 import 'package:pokelens/models/page_models.dart';
 import 'package:pokelens/models/pokedex_list_models.dart';
 import 'package:pokelens/models/pokedex_models.dart';
+import 'package:pokelens/models/pokemon_card_model.dart';
 
 class RemoteService {
   final http.Client _client = http.Client();
@@ -62,7 +62,7 @@ class RemoteService {
     if (query.isNotEmpty) {
       url = 'https://api.pokemontcg.io/v2/$type?q=$query&page=$pageNumber&pageSize=$pageSize';
     }
-    return Page.fromJson(await fetch(url) as Map<String, dynamic>);
+    return Page.fromJson(await fetch(url));
   }
 
   Future<List<Collection>?> getCollections() async {
@@ -116,7 +116,7 @@ class RemoteService {
     //Pega todas as espécies de pokemon e retorna uma lista com os urls
     String url = 'https://pokeapi.co/api/v2/pokemon-species?limit=$limit&offset=$offset';
     PokemonSpeciesList pokemonSpeciesList =
-        PokemonSpeciesList.fromJson(await fetch(url) as Map<String, dynamic>);
+        PokemonSpeciesList.fromJson(await fetch(url));
     return pokemonSpeciesList.urls;
   }
 

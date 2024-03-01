@@ -1,17 +1,18 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:pokelens/models/card_models.dart';
-import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/widgets/app_bar_widget.dart';
 import 'package:pokelens/widgets/cards_widget.dart';
+import 'package:pokelens/models/pokemon_card_model.dart';
+import 'package:pokelens/models/collections_models.dart';
+
 import 'package:pokelens/services/remote_services.dart';
 
 
 class CardPage extends StatefulWidget {
   final Collection? collection;
 
-  const CardPage({Key? key, this.collection}) : super(key: key);
+  const CardPage({super.key, this.collection});
 
   @override
   CardPageState get createState => CardPageState();

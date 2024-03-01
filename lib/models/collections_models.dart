@@ -33,17 +33,18 @@ class Collection {
         logoImg: json["images"]["logo"],
       );
 
-  factory Collection.fromDB(Map<String, dynamic> data) => Collection(
-        id: data['id'],
-        name: data['set_name'],
-        series: data['series'],
-        printedTotal: data['printedTotal'],
-        total: data['total'],
-        ptcgoCode: data['ptcgoCode'],
-        releaseDate: data['releaseDate'],
-        symbolImg: data['symbolImg'],
-        logoImg: data['logoImg'],
-      );
+  factory Collection.fromMap(Map<String, dynamic> data) => Collection(
+    id: data['id'] ?? '',
+    name: data['set_name'] ?? '',
+    series: data['series'] ?? '',
+    printedTotal: data['printedTotal'] ?? 0,
+    total: data['total'] ?? 0,
+    ptcgoCode: data['ptcgoCode'] ?? '',
+    releaseDate: data['releaseDate'] ?? '',
+    symbolImg: data['symbolImg'] ?? '',
+    logoImg: data['logoImg'] ?? '',
+  );
+
 
   Map<String, dynamic> toMap() {
     return {
@@ -59,6 +60,9 @@ class Collection {
     };
   }
 }
+
+
+
 
 
 /* class Legalities {

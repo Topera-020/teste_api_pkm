@@ -8,13 +8,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.searchController,
     required this.isSearchExpanded,
     required this.onSearchToggled,
     required this.onSearchChanged,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   CustomAppBarState get createState => CustomAppBarState();
@@ -52,7 +52,6 @@ class CustomAppBarState extends State<CustomAppBar> {
             : CrossFadeState.showFirst,
         duration: const Duration(milliseconds: 300),
       ),
-      backgroundColor: Colors.red[700],
       actions: [
         IconButton(
           icon: Icon(widget.isSearchExpanded ? Icons.close : Icons.search),

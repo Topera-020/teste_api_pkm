@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:pokelens/data/repositories/colections_repository.dart';
-import 'package:pokelens/data/repositories/pokemon_cards_repository.dart';
+import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/services/remote_services.dart';
 
 class LoadingPage extends StatefulWidget {
-  const LoadingPage({Key? key}) : super(key: key);
+  const LoadingPage({super.key});
 
   @override
   LoadingPageState get createState => LoadingPageState();
 }
 
 class LoadingPageState extends State<LoadingPage> {
-  int qntCartasDB = 0;
-  int qntCartasAPI = 0;
-  int qntSetsDB = 0;
-  int qntSetsAPI = 0;
+  int countPokemonDB = 0;
+  int countPokemonAPI = 0;
+  int countCollectionsDB = 0;
+  int countCollectionsAPI = 0;
 
   @override
   void initState() {
     super.initState();
-    carregarDados();
+    quantidadeDados();
   }
 
-  Future<void> carregarDados() async {
-    qntCartasDB = await PokemonRepository().getQuantidadeDeCartas();
-    qntSetsDB = await CollectionsRepository().getQuantidadeDeSets();
-    qntCartasAPI = await RemoteService().getQuantidadeDeCartas();
-    qntSetsAPI = await RemoteService().getQuantidadeDeSets();
-
+  Future<void> quantidadeDados() async {
+    countPokemonAPI = await RemoteService().getQuantidadeDeCartas();
+    countCollectionsAPI = await RemoteService().getQuantidadeDeSets();
+    countPokemonDB = await PokemonDatabaseHelper.instance.countPokemon();
+    countCollectionsDB = await PokemonDatabaseHelper.instance.countCollections();
     setState(() {});
   }
 
@@ -45,8 +43,11 @@ class LoadingPageState extends State<LoadingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Quantidade de Sets baixados: $qntSetsDB de $qntSetsAPI'),
-            Text('Quantidade de Cartas baixadas: $qntCartasDB de $qntCartasAPI'),
+            const SizedBox( height: 20.0, ),
+            Text('Quantidade de Sets baixados: $countCollectionsDB de $countCollectionsAPI', 
+            style: TextStyle(fontSize: 18.0, ),),
+            Text('Quantidade de Cartas baixadas: $countPokemonDB de $countPokemonAPI',
+            style: TextStyle(fontSize: 18.0,),),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: atualizarDB,

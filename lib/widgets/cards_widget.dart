@@ -1,15 +1,16 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:pokelens/models/card_models.dart';
+import 'package:pokelens/models/pokemon_card_model.dart';
+
 
 class CardWidget extends StatefulWidget {
   final PokemonCard pokemonCard;
 
   const CardWidget({
-    Key? key,
+    super.key,
     required this.pokemonCard,
-  }) : super(key: key);
+  });
 
   @override
   CardWidgetState get createState => CardWidgetState();
@@ -29,7 +30,7 @@ class CardWidgetState extends State<CardWidget> {
               children: [
                 Center(
                   child: Image.network(
-                    widget.pokemonCard.smallImg!,
+                    widget.pokemonCard.small,
                     fit: BoxFit.cover,
                   ),
                 ),

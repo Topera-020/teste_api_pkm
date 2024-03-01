@@ -1,9 +1,10 @@
 // ignore_for_file: unnecessary_string_escapes, prefer_interpolation_to_compose_strings
 
 import 'package:flutter/material.dart';
+import 'package:pokelens/widgets/drawer_widget.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
    @override
   SettingsPageState get createState => SettingsPageState();
@@ -19,6 +20,7 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text('Configurações'),
       ),
+      drawer: const DrawerWidget(),
       body: SingleChildScrollView(
         child:Padding(
         padding: const EdgeInsets.all(16.0),
@@ -112,7 +114,7 @@ class SettingsPageState extends State<SettingsPage> {
               'Nome do App:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const Text('PokémonCard Scanner'),
+            const Text('PokéLens'),
 
             const SizedBox(height: 16),
 
@@ -133,14 +135,6 @@ class SettingsPageState extends State<SettingsPage> {
               'Este aplicativo é dedicado à manutenção de cartas Pokémon TCG. '
               'Ele inclui recursos como scanner de cartas usando visão computacional '
               'e armazenamento de dados offline.',
-              textAlign: TextAlign.justify,
-            ),
-
-            const SizedBox(height: 32),
-
-            const Text(
-              'Atualmente, os dados não estão sendo compartilhados, '
-              'pois o aplicativo utiliza armazenamento de dados interno.',
               textAlign: TextAlign.justify,
             ),
 

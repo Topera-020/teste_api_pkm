@@ -8,9 +8,9 @@ class SetsCardWidget extends StatelessWidget {
   final Collection collection;
 
   const SetsCardWidget({
-    Key? key,
+    super.key,
     required this.collection,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
