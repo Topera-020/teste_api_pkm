@@ -1,8 +1,7 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:pokelens/models/collections_models.dart';
-import 'package:pokelens/pages/card_page.dart';
 
 class SetsCardWidget extends StatelessWidget {
   final Collection collection;
@@ -81,7 +80,7 @@ class SetsCardWidget extends StatelessWidget {
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: constraints.maxWidth * 0.07,
+          fontSize: constraints.maxWidth * 0.09,
         ),
       ),
     );
@@ -90,12 +89,7 @@ class SetsCardWidget extends StatelessWidget {
 Widget buildInkWell(BuildContext context) {
   return InkWell(
     onTap: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => CardPage(collection: collection),
-        ),
-      );
-
+      print(collection.toMap());
     },
     splashColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
     highlightColor: Colors.transparent,

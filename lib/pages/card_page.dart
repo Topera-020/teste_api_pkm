@@ -107,6 +107,7 @@ class CardPageState extends State<CardPage> {
           });
         },
         title: widget.collection?.name ?? 'ERRO',
+        searchFocusNode: FocusNode(),
       ),
       
       body: FutureBuilder<List<PokemonCard>?>(

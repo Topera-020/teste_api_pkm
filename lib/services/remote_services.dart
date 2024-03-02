@@ -12,28 +12,6 @@ import 'package:pokelens/models/pokemon_card_model.dart';
 class RemoteService {
   final http.Client _client = http.Client();
 
-  List<T> sortList<T>(List<T> list, int Function(T, T) compareFunction) {
-    return list.toList()..sort(compareFunction);
-  }
-
-  Map<String, List<T>> groupListByProperty<T>(List<T> list, String Function(T) propertyFunction) {
-    Map<String, List<T>> groupedMap = {};
-
-    for (var item in list) {
-      String key = propertyFunction(item);
-      if (!groupedMap.containsKey(key)) {
-        groupedMap[key] = [];
-      }
-      groupedMap[key]!.add(item);
-    }
-
-    return groupedMap;
-  }
-
-  List<T> filterList<T>(List<T> list, bool Function(T) filterFunction) {
-    return list.where(filterFunction).toList();
-  }
-
   Future<Map<String, dynamic>> fetch(String url) async {
     final Uri uri = Uri.parse(url);
     try {

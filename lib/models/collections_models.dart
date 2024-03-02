@@ -35,7 +35,7 @@ class Collection {
 
   factory Collection.fromMap(Map<String, dynamic> data) => Collection(
     id: data['id'] ?? '',
-    name: data['set_name'] ?? '',
+    name: data['name'] ?? '',
     series: data['series'] ?? '',
     printedTotal: data['printedTotal'] ?? 0,
     total: data['total'] ?? 0,

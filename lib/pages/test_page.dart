@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
+import 'package:pokelens/services/remote_services.dart';
 import 'package:pokelens/widgets/drawer_widget.dart';
 
 class TestPage extends StatefulWidget {
@@ -21,9 +22,10 @@ class TestPageState extends State<TestPage> {
   }
 
   Future<void> fetchData() async {
-    final List<Collection> collections = await PokemonDatabaseHelper.instance.getCollections();
+    final List<Collection>? collections = await RemoteService().getCollections();
+    //final List<Collection> collections = await PokemonDatabaseHelper.instance.getCollections();
     setState(() {
-      pokemonCollections = collections;
+      pokemonCollections = collections!;
     });
   }
 
@@ -50,23 +52,7 @@ class TestPageState extends State<TestPage> {
     fetchData(); // Atualiza a lista após adicionar um novo card
   }
 
-  Future<void> addCollection() async {
-    // Exemplo: Adicionar instância de PokemonCard com dados fictícios
-    Collection newCollection = Collection(
-      id: DateTime.now().toString(), // Pode usar alguma lógica para gerar um ID único
-      name: 'collectionzzz',
-      series: 'xyz',
-      printedTotal: 134,
-      total: 140,
-      ptcgoCode: '',
-      releaseDate: '100',
-      symbolImg: 'symbolImg_image_url',
-      logoImg: 'symbolImg',
-    );
-
-    await PokemonDatabaseHelper.instance.insertCollection(newCollection);
-    fetchData(); // Atualiza a lista após adicionar um novo card
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -89,39 +75,4 @@ class TestPageState extends State<TestPage> {
     );
   }
 
-  Future<void> _showAddDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add Pokemon Card'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Fill in the details for the new Pokemon Card:'),
-                // Add TextFields or other input widgets here to capture user input
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Call a function to save the new PokemonCard
-                await addCollection();
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pop();
-              },
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
