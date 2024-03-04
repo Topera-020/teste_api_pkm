@@ -1,7 +1,8 @@
 import 'package:pokelens/models/collections_models.dart';
+import 'package:pokelens/models/pokemon_card_model.dart';
 
 
-class CollectionFilterService {
+class FilterService {
   List<Collection> filterCollections(List<Collection> allCollections, String searchTerm) {
     searchTerm = searchTerm.toLowerCase();
     return allCollections.where((collection) {
@@ -11,6 +12,25 @@ class CollectionFilterService {
           collection.name.toLowerCase().contains(searchTerm) ||
           collection.series.toLowerCase().contains(searchTerm) ||
           collection.releaseDate.toLowerCase().contains(searchTerm);
+    }).toList();
+  }
+
+  
+  List<PokemonCard> filterCards(List<PokemonCard> allCards, String searchTerm) {
+    searchTerm = searchTerm.toLowerCase();
+    return allCards.where((card) {
+      return 
+          card.id.toLowerCase().contains(searchTerm) ||
+          card.name.toLowerCase().contains(searchTerm) ||
+          card.supertype.toLowerCase().contains(searchTerm) ||
+          card.subtypes.toString().toLowerCase().contains(searchTerm) ||
+          card.number.toLowerCase().contains(searchTerm) ||
+          card.artist.toLowerCase().contains(searchTerm) ||
+          card.rarity.toLowerCase().contains(searchTerm) ||
+          card.nationalPokedexNumbers.toString().toLowerCase().contains(searchTerm) ||
+          card.collectionName.toString().toLowerCase().contains(searchTerm) ||
+          card.series.toLowerCase().contains(searchTerm) ||
+          card.releaseDate.toLowerCase().contains(searchTerm);
     }).toList();
   }
 

@@ -3,10 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:pokelens/models/collections_models.dart';
 
-class SetsCardWidget extends StatelessWidget {
+
+class CollectionsCardWidget extends StatelessWidget {
   final Collection collection;
 
-  const SetsCardWidget({
+  const CollectionsCardWidget({
     super.key,
     required this.collection,
   });
@@ -89,7 +90,14 @@ class SetsCardWidget extends StatelessWidget {
 Widget buildInkWell(BuildContext context) {
   return InkWell(
     onTap: () {
-      print(collection.toMap());
+      print('CW: collection ${collection.toMap()}'); 
+      Navigator.pushNamed(
+        context,
+        '/cardsPage',
+        arguments: {
+          'collection': collection,
+        },
+      );
     },
     splashColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
     highlightColor: Colors.transparent,

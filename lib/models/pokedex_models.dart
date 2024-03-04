@@ -16,8 +16,6 @@ class PokedexEntry {
   final String? female; 
   final String? shinyFemale;
 
-  
-
   PokedexEntry({
     required this.id,
     required this.pokedexNumber,

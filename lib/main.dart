@@ -1,5 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:pokelens/pages/card_page.dart';
+import 'package:pokelens/pages/cards_page.dart';
 import 'package:pokelens/pages/collections_page.dart';
 import 'package:pokelens/pages/about_page.dart';
 import 'package:pokelens/pages/settings_page.dart';
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => const CollectionsPage(),
-        '/cardsPage': (context) => const CardPage(collection: null),
+        '/cardsPage': (context) => CardsPage(),
         '/collectionsPage': (context) => const CollectionsPage(),
         '/settings': (context) => const SettingsPage(),
         '/test': (_) => const TestPage(),

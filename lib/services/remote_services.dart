@@ -5,8 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:pokelens/models/page_models.dart';
-import 'package:pokelens/models/pokedex_list_models.dart';
-import 'package:pokelens/models/pokedex_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 
 class RemoteService {
@@ -31,15 +29,17 @@ class RemoteService {
     }
   }
 
+
   Future<Page> fetchPage(String type, {
     int pageNumber = 1,
     String query = '',
-    int pageSize = 21,
+    int pageSize = 250,
   }) async {
     String url = 'https://api.pokemontcg.io/v2/$type?page=$pageNumber&pageSize=$pageSize';
     if (query.isNotEmpty) {
       url = 'https://api.pokemontcg.io/v2/$type?q=$query&page=$pageNumber&pageSize=$pageSize';
     }
+    print(url);
     return Page.fromJson(await fetch(url));
   }
 
@@ -61,18 +61,24 @@ class RemoteService {
     }
   }
 
-  Future<List<PokemonCard>?> getCards({String query = '', int pageNumber = 1}) async {
-    Page pageCard = await fetchPage('cards', query: query, pageNumber: pageNumber);
-    final List<Map<String, dynamic>> allCards = pageCard.data;
+  Future<List<PokemonCard>> getAllCardsByCollection(String collectionId) async {
+    int pageNumber = 1;
+    List<Map<String, dynamic>> allCards = [];
+    int totalCount = 0;
+
+    do {
+      Page pageCard = await fetchPage('cards', query: 'id:$collectionId', pageNumber: pageNumber);
+      allCards.addAll(pageCard.data);
+      totalCount = pageCard.totalCount;
+      pageNumber++;
+    } while (allCards.length < totalCount);
 
     if (allCards.isEmpty) {
       print('No data available.');
-      return null;
+      return [];
     }
 
-    print('allCards length ${allCards.length}');
     final List<PokemonCard> listCards = allCards.map((map) => PokemonCard.fromJson(map)).toList();
-    print('listCards length ${listCards.length}');
 
     return listCards;
   }
@@ -87,90 +93,6 @@ class RemoteService {
     return page.totalCount;
   }
 
-  Future<List<String>> fetchPokemonSpeciesUrls({
-    int offset = 0,
-    int limit = 10000,
-  }) async {
-    //Pega todas as espécies de pokemon e retorna uma lista com os urls
-    String url = 'https://pokeapi.co/api/v2/pokemon-species?limit=$limit&offset=$offset';
-    PokemonSpeciesList pokemonSpeciesList =
-        PokemonSpeciesList.fromJson(await fetch(url));
-    return pokemonSpeciesList.urls;
-  }
-
-  Future<List<PokedexEntry>> fetchPokedexEntryList() async {
-    List<PokedexEntry> pokedexEntries = [];
-
-    try {
-      List<String> pokemonSpeciesUrls = await fetchPokemonSpeciesUrls();
-
-      for (String speciesUrl in pokemonSpeciesUrls) {
-        try {
-          Map<String, dynamic> speciesJson = await fetch(speciesUrl);
-          // speciesJson - página da espécie do pokemon {id(pokedexNumber), baby, legendary, mythical, varieties, genderDif}
-
-          if (speciesJson.containsKey('varieties') && speciesJson['varieties'] is List) {
-            List<String> varietiesUrls = speciesJson['varieties']
-                .map<String>((map) => map["pokemon"]["url"])
-                .toList(); // Pega a lista de URLs com as Variedades de determinado pokemon
-
-            for (String variationUrl in varietiesUrls) {
-              try {
-                Map<String, dynamic> variationJson = await fetch(variationUrl);
-                if (variationJson.containsKey('types') && variationJson['types'] is List) {
-                  List<String> types = variationJson["types"]
-                      .map<String>((type) => type["type"]["name"])
-                      .toList();
-                  List<String> varieties = variationJson['varieties']
-                      .where((variation) => variation["is_default"] == false)
-                      .map<String>((variation) => variation["pokemon"]["name"])
-                      .toList();
-
-                  PokedexEntry entry = PokedexEntry(
-                    // Características que vêm da página de Variação (/Pokemon/)
-                    id: variationJson['id'],
-                    name: variationJson['name'],
-                    height: variationJson['height'],
-                    weight: variationJson['weight'],
-                    isDefault: variationJson['is_default'],
-                    types: types,
-                    officialArtwork: variationJson['sprites']['other']['official-artwork']['front_default'],
-                    shiny: variationJson['sprites']['other']['official-artwork']['front_shiny'],
-
-                    // Características que vêm da página de Espécie (/Pokemon-species/)
-                    pokedexNumber: speciesJson['id'],
-                    isBaby: speciesJson['is_baby'],
-                    isLegendary: speciesJson['is_legendary'],
-                    isMythical: speciesJson['is_mythical'],
-                    evolvesFromSpecies: speciesJson['evolves_from_species'] != null
-                        ? speciesJson['evolves_from_species']['name']
-                        : null,
-                    varieties: varieties, // lista com o nome das variedades
-                    female: variationJson['sprites']['other']['home']['front_female'],
-                    shinyFemale: variationJson['sprites']['other']['home']['front_shiny_female'],
-                  );
-
-                  pokedexEntries.add(entry);
-                } else {
-                  print('Erro: Variante sem tipos definidos.');
-                }
-              } catch (e) {
-                print('Erro ao processar variação: $e');
-              }
-            }
-          } else {
-            print('Erro: Espécie sem variedades definidas.');
-          }
-        } catch (e) {
-          print('Erro ao processar espécie: $e');
-        }
-      }
-    } catch (e) {
-      print('Erro ao buscar URLs das espécies: $e');
-    }
-
-    return pokedexEntries;
-  }
 
   void dispose() {
     _client.close();

@@ -48,8 +48,14 @@ class DrawerWidget extends StatelessWidget {
               leading: const Icon(Icons.apps_rounded),
               title: const Text('Todas as Cartas'),
               onTap: () {
-                Navigator.pop(context); 
-                // Adicione aqui a lógica para navegar para a página de todas as cartas
+                Navigator.popUntil(context, (route) => route.isFirst); // Remove todas as rotas exceto a primeira
+                Navigator.pushNamed(
+                  context,
+                  '/cardsPage',
+                  arguments: {
+                    'collection': null,
+                  },
+                );
               },
             ),
 
@@ -58,7 +64,7 @@ class DrawerWidget extends StatelessWidget {
               title: const Text('Pokedex'),
               onTap: () {
                 Navigator.pop(context); // Fecha o Drawer
-                // Adicione a lógica ou navegação necessária para a Pokedex aqui
+                
               },
             ),
 
@@ -68,7 +74,6 @@ class DrawerWidget extends StatelessWidget {
               title: const Text('Listas Pessoais'),
               onTap: () {
                 Navigator.pop(context); // Fecha o Drawer
-                Navigator.pushNamed(context, '/'); 
               },
             ),
 
@@ -77,7 +82,10 @@ class DrawerWidget extends StatelessWidget {
               title: const Text('Estatísticas'),
               onTap: () {
                 Navigator.pop(context); 
-                Navigator.pushNamed(context, '/test'); 
+                Navigator.pushNamedAndRemoveUntil( context,
+                '/test', 
+                ModalRoute.withName('/'), 
+              );
               },
             ),
 
@@ -85,8 +93,7 @@ class DrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Configurações'),
             onTap: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
+              Navigator.pushNamedAndRemoveUntil( context,
                 '/settings', 
                 ModalRoute.withName('/'), 
               );

@@ -17,8 +17,6 @@ class CardWidget extends StatefulWidget {
 }
 
 class CardWidgetState extends State<CardWidget> {
-  int checkboxState = 0; // 0 - Branco, 1 - Verde, 2 - Vermelho
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -28,15 +26,13 @@ class CardWidgetState extends State<CardWidget> {
           builder: (BuildContext context, BoxConstraints constraints) {
             return Stack(
               children: [
-                Center(
-                  child: Image.network(
-                    widget.pokemonCard.small,
-                    fit: BoxFit.cover,
-                  ),
+                Image.network(
+                  widget.pokemonCard.small,
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight,
+                  fit: BoxFit.cover,
                 ),
-                
-                buildCardInfo(context, constraints),
-                buildCheckbox(),
+                buildCardName(constraints),
                 buildInkWell(context),
               ],
             );
@@ -50,7 +46,7 @@ class CardWidgetState extends State<CardWidget> {
     return InkWell(
       onTap: () {
         setState(() {
-          checkboxState = (checkboxState + 1) % 3; // Alternar entre 0, 1 e 2
+          // Adicione a lógica de manipulação do clique, se necessário
         });
       },
       splashColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
@@ -58,99 +54,26 @@ class CardWidgetState extends State<CardWidget> {
     );
   }
 
-  Widget buildCardInfo(BuildContext context, BoxConstraints constraints) {
-    switch (checkboxState) {
-      case 1:
-        break;
-      case 2:
-        break;
-      default:
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Transform.translate(
-          offset: Offset(0.0, constraints.maxHeight * 0.7),
-          child: buildCardName(constraints),
-        ),
-      ],
-    );
-  }
-
-
-  Widget buildCheckbox() {
-    Color checkboxColor;
-    switch (checkboxState) {
-      case 1:
-        checkboxColor = Colors.green;
-        break;
-      case 2:
-        checkboxColor = Colors.red;
-        break;
-      default:
-        checkboxColor = Colors.green[100]!;
-    }
-
-    return Positioned(
-      bottom: 1.0,
-      right: 2.0,
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            checkboxState = (checkboxState + 1) % 3; // Alternar entre 0, 1 e 2
-          });
-        },
-        child: Container(
-          width: 25.0,
-          height: 25.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.green, width: 2.0),
-            color: checkboxColor,
-            
-          ),
-          child: checkboxState == 1
-              ? const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 20.0,
-                )
-              : null,
-        ),
-      ),
-    );
-  }
-
-
   Widget buildCardName(BoxConstraints constraints) {
-    Color textColor;
-    switch (checkboxState) {
-      case 1:
-        textColor = Colors.green.withOpacity(0.8);
-        break;
-      case 2:
-        textColor = Colors.red.withOpacity(0.8);
-        break;
-      default:
-        textColor = Colors.white.withOpacity(0.8);
-    }
-
-    return Container(
-      
-      width: constraints.maxWidth,
-      color: textColor,
-      padding: const EdgeInsets.fromLTRB(15, 0.6, 2, 0.6),
-      child: Text(
-        '${widget.pokemonCard.number} - ${widget.pokemonCard.name}',
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: constraints.maxWidth * 0.1,
-          fontWeight: FontWeight.bold,
+    return Positioned(
+      top: constraints.maxHeight * 0.75, // Ajuste este valor conforme necessário
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white.withOpacity(0.8),
+        padding: const EdgeInsets.fromLTRB(15, 0.6, 2, 0.6),
+        child: Text(
+          '${widget.pokemonCard.number} - ${widget.pokemonCard.name}',
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: constraints.maxWidth * 0.1,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
+
+
 }
