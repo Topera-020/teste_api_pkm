@@ -52,7 +52,7 @@ class RemoteService {
         print('No data available. (Collections)');
         return null;
       }
-      final List<Collection> listCollection = allCollections.map((map) => Collection.fromJson(map)).toList();
+      final List<Collection> listCollection = allCollections.map((map) => Collection.fromMap(map)).toList();
 
       return listCollection;
     } catch (e) {
@@ -66,22 +66,25 @@ class RemoteService {
     List<Map<String, dynamic>> allCards = [];
     int totalCount = 0;
 
-    do {
+    do{
       Page pageCard = await fetchPage('cards', query: 'id:$collectionId', pageNumber: pageNumber);
       allCards.addAll(pageCard.data);
       totalCount = pageCard.totalCount;
       pageNumber++;
-    } while (allCards.length < totalCount);
+    }while (allCards.length < totalCount);
 
     if (allCards.isEmpty) {
       print('No data available.');
       return [];
     }
 
-    final List<PokemonCard> listCards = allCards.map((map) => PokemonCard.fromJson(map)).toList();
+    final List<PokemonCard> listCards = allCards.map((cardData) {
+      return PokemonCard.fromMap(cardData);
+    }).toList();
 
     return listCards;
   }
+
 
   Future<int> getQuantidadeDeCartas() async {
     Page page = await fetchPage('cards', pageSize: 1);

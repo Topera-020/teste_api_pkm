@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:pokelens/widgets/card_size_selector_widget.dart';
 
+// ignore: must_be_immutable
 class FiltersTab extends StatefulWidget {
   final ValueChanged<String> onSortingChanged;
   final ValueChanged<int> onOrderChanged;
-  final int selectedCardSize;
   final ValueChanged<int> onCardSizeChanged;
+  final List<String> sortingList;
+  int selectedCardSize;
+  String sortingOption;
+  int selectedOrderIndex;
 
-  const FiltersTab({
+
+  FiltersTab({
     super.key,
+    required this.sortingList,
     required this.onSortingChanged,
     required this.onOrderChanged,
     required this.selectedCardSize,
-    required this.onCardSizeChanged, required String sortingOption, required int selectedOrderIndex,
+    required this.onCardSizeChanged,
+    this.sortingOption = 'Name',
+    this.selectedOrderIndex = 0,
   });
 
   @override
   FiltersTabState get createState => FiltersTabState();
 }
 
-class FiltersTabState extends State<FiltersTab> {
-  late String selectedSorting;
-  late int selectedOrderIndex;
-  late int selectedCardSize;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedSorting = 'Nome'; // Defina a opção inicial de ordenação conforme necessário
-    selectedOrderIndex = 0; // Defina o índice inicial de ordem conforme necessário
-    selectedCardSize = widget.selectedCardSize; // Inicialize com o valor fornecido pelo widget pai
-  }
+class FiltersTabState extends State<FiltersTab> {  
 
   @override
   Widget build(BuildContext context) {
@@ -54,42 +51,41 @@ class FiltersTabState extends State<FiltersTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CardSizeSelector(
-                selectedCardSize: selectedCardSize,
+                selectedCardSize: widget.selectedCardSize,
                 onChanged: (int? newSize) {
                   setState(() {
-                    selectedCardSize = newSize ?? selectedCardSize;
+                    widget.selectedCardSize = newSize ?? widget.selectedCardSize;
                   });
-                  // Chame a função de retorno associada ao parâmetro selectedCardSize
-                  widget.onCardSizeChanged(selectedCardSize);
+                  widget.onCardSizeChanged(widget.selectedCardSize);
                 },
               ),
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
                     child: Text(
                       'Critério de Ordenação:',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
                     child: DropdownButton<String>(
-                      value: selectedSorting,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedSorting = newValue!;
-                        });
-                        // Chame a função de retorno associada ao parâmetro sortingOption
-                        widget.onSortingChanged(selectedSorting);
-                      },
-                      items: <String>['Data', 'Nome']
-                          .map<DropdownMenuItem<String>>((String value) {
+                      value: widget.sortingOption,
+                      items: widget.sortingList.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
+                      onChanged: (String? selectedValue) {
+                        if (selectedValue != null) {
+                          setState(() {
+                            widget.sortingOption = selectedValue;
+                          });
+                          widget.onSortingChanged(widget.sortingOption);
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -104,15 +100,14 @@ class FiltersTabState extends State<FiltersTab> {
                     ),
                   ),
                   ToggleButtons(
-                    isSelected: [selectedOrderIndex == 0, selectedOrderIndex == 1],
+                    isSelected: [widget.selectedOrderIndex == 0, widget.selectedOrderIndex == 1],
                     onPressed: (int index) {
                       setState(() {
-                        if (selectedOrderIndex != index) {
-                          selectedOrderIndex = index;
+                        if (widget.selectedOrderIndex != index) {
+                          widget.selectedOrderIndex = index;
                         }
                       });
-                      // Chame a função de retorno associada ao parâmetro selectedOrderIndex
-                      widget.onOrderChanged(selectedOrderIndex);
+                      widget.onOrderChanged(widget.selectedOrderIndex);
                     },
                     children: const <Widget>[
                       Icon(Icons.arrow_upward),

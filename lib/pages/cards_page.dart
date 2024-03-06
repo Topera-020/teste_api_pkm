@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:pokelens/models/collections_models.dart';
@@ -28,7 +27,8 @@ class CardsPageState extends State<CardsPage> {
   int selectedOrderIndex = 0;
   FilterService filterService = FilterService();
   final FocusNode _searchFocusNode = FocusNode();
-  String sortingOption = 'Nome';
+  List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista'];
+  late String sortingOption = sortingList[0];
 
   int Function(PokemonCard, PokemonCard) get compareFunction {
     switch (sortingOption) {
@@ -40,8 +40,19 @@ class CardsPageState extends State<CardsPage> {
         return (a, b) => a.hp.compareTo(b.hp);
       case 'Tipos':
         return (a, b) => a.types[0].compareTo(b.types[0]);
+      case 'Número':
+        return (a, b) => a.numberINT.compareTo(b.numberINT);
+      case 'Artista':
+        return (a, b) => a.artist.compareTo(b.artist);
+      case '# Pokédex':
+        return (a, b) {
+          return a.nationalPokedexNumbers[0].compareTo(b.nationalPokedexNumbers[0]);
+        };
       default:
-        return (a, b) => 0;
+        return (a, b) {
+          print('erro: $sortingOption');
+          return 0;
+        };
     }
   }
 
@@ -50,12 +61,15 @@ class CardsPageState extends State<CardsPage> {
     super.didChangeDependencies();
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    
 
     if (args != null) {
       final Collection? collection = args['collection'] as Collection?;
       if (collection != null) {
+        sortingList.remove('Data');
+        sortingOption = sortingList[0];
         collectionId = collection.id;
-        title = collection.id;
+        title = collection.name;
         print('Page: Id da coleção: ${collection.id} $collectionId');
       }
 
@@ -70,6 +84,7 @@ class CardsPageState extends State<CardsPage> {
 
   Future<void> fetchData() async {
     print('fetchData $collectionId');
+
     final List<PokemonCard>? cards =
         await PokemonDatabaseHelper.instance.getPokemonCards(
       collectionId: collectionId,
@@ -79,7 +94,6 @@ class CardsPageState extends State<CardsPage> {
       setState(() {
         pokemonCards = cards;
         filteredCards = List.from(pokemonCards);
-        sortCards();
       });
     } else {
       print('A lista de cartas é nula.');
@@ -95,13 +109,15 @@ class CardsPageState extends State<CardsPage> {
   }
 
   void sortCards() {
+    if(sortingOption=='# Pokédex'){
+      filteredCards = filterService.filterPokemonCardsBySupertype(filteredCards);
     setState(() {
       filteredCards = filterService.sortList(
         filteredCards,
         compareFunction,
         ascending: selectedOrderIndex == 0,
       );
-    });
+    });}
   }
 
   @override
@@ -140,6 +156,7 @@ class CardsPageState extends State<CardsPage> {
         searchFocusNode: _searchFocusNode,
       ),
       endDrawer: FiltersTab(
+        sortingList: sortingList,
         sortingOption: sortingOption,
         selectedOrderIndex: selectedOrderIndex,
         selectedCardSize: selectedCardSize,
@@ -169,7 +186,7 @@ class CardsPageState extends State<CardsPage> {
         child: filteredCards.isEmpty
             ? const Center(
                 child: Text(
-                  'Nenhuma coleção disponível.',
+                  'Nenhuma carta disponível.',
                   style: TextStyle(fontSize: 18.0),
                 ),
               )
@@ -178,7 +195,7 @@ class CardsPageState extends State<CardsPage> {
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: selectedCardSize,
-                    childAspectRatio: 0.75,
+                    childAspectRatio: 0.73,
                     crossAxisSpacing: 6.0/selectedCardSize,
                     mainAxisSpacing: 8.0,
                   ),

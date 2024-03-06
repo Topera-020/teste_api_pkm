@@ -7,8 +7,6 @@ import 'package:pokelens/pages/about_page.dart';
 import 'package:pokelens/pages/settings_page.dart';
 import 'package:pokelens/pages/test_page.dart';
 
-//import 'package:pokelens/pages/test_page.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

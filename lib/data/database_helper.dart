@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 
 import 'dart:convert';
 import 'dart:io';
@@ -32,7 +31,6 @@ class PokemonDatabaseHelper {
   Future<Database> initDatabase() async {
     // Obtém o caminho do banco de dados no dispositivo
     String path = join(await getDatabasesPath(), 'pokemon.db');
-    print(path);
     
     // Abre o banco de dados ou cria um novo se não existir
     return await openDatabase(
@@ -73,6 +71,7 @@ class PokemonDatabaseHelper {
             artist TEXT,
             rarity TEXT,
             nationalPokedexNumbers TEXT,
+            numberINT INTEGER,
             FOREIGN KEY (collectionId) REFERENCES collections(id)
           )
         ''');
@@ -202,18 +201,20 @@ class PokemonDatabaseHelper {
   // Método para inserir uma carta de Pokémon no banco de dados
   Future<int> insertPokemonCard(PokemonCard card) async {
     final db = await database;
-    // Verifica se o ID da coleção já existe
-    final existingCard = await db.query(
-      'pokemon_cards',
-      where: 'id = ?',
-      whereArgs: [card.id],
-    );
 
-    if (existingCard.isNotEmpty) {
+
+    // Verifica se o ID da coleção já existe
+    //final existingCard = await db.query(
+      //'pokemon_cards',
+      //where: 'id = ?',
+      //whereArgs: [card.id],
+    //);
+
+    //if (existingCard.isNotEmpty) {
       // O ID já existe; você pode lidar com isso conforme necessário
-      print('Card with ID ${card.id} already exists.');
-      return -1; // Ou algum outro valor para indicar falha
-    }
+      //print('Card with ID ${card.id} already exists.');
+      //return -1; // Ou algum outro valor para indicar falha
+    //}
 
     try {
       await db.transaction((txn) async {
@@ -233,11 +234,24 @@ class PokemonDatabaseHelper {
           'artist': card.artist,
           'rarity': card.rarity,
           'nationalPokedexNumbers': jsonEncode(card.nationalPokedexNumbers),
+          'numberINT': card.numberINT
         });
+      });
 
+      return 1; // Retorna 1 para indicar sucesso na inserção
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error inserting PokemonCard: $e');
+      return -1; // Retorna um valor que indica falha na inserção
+    }
+  }
+  Future<int> insertUserData(String id) async {
+    final db = await database;
+    try {
+      await db.transaction((txn) async {
         // Inserir na tabela user_data (valores padrão)
         await txn.insert('user_data', {
-          'id': card.id,
+          'id': id,
           'tags': '[]', // Valor padrão para tags
           'tenho': 0, // Valor padrão para tenho
           'preciso': 0, // Valor padrão para preciso
@@ -246,18 +260,17 @@ class PokemonDatabaseHelper {
 
       return 1; // Retorna 1 para indicar sucesso na inserção
     } catch (e) {
-      print('Error inserting PokemonCard: $e');
+      // ignore: avoid_print
+      print('Error inserting user_data: $e');
       return -1; // Retorna um valor que indica falha na inserção
     }
   }
-
 
   // Método para obter todas as cartas de Pokémon do banco de dados
   Future<List<PokemonCard>?> getPokemonCards({String? collectionId}) async {
     final db = await database;
 
     List<Map<String, dynamic>> maps;
-    print('DB collectionId: $collectionId');
 
     if (collectionId != null) {
       maps = await db.rawQuery('''
@@ -266,6 +279,7 @@ class PokemonDatabaseHelper {
         JOIN collections c ON pc.collectionId = c.id
         JOIN user_data ud ON pc.id = ud.id
         WHERE pc.collectionId = ?
+        ORDER BY numberINT ASC
       ''', [collectionId]);
     } else {
       maps = await db.rawQuery('''
@@ -273,9 +287,11 @@ class PokemonDatabaseHelper {
         FROM pokemon_cards pc
         JOIN collections c ON pc.collectionId = c.id
         JOIN user_data ud ON pc.id = ud.id
+        ORDER BY releaseDate ASC
       ''');
     }
 
+    print('$collectionId length: ${maps.length}');
     return List.generate(maps.length, (i) {
       PokemonCard card = PokemonCard.fromMap(maps[i]);
       return card;
@@ -293,6 +309,7 @@ class PokemonDatabaseHelper {
 
     return result;
   } catch (e) {
+    // ignore: avoid_print
     print('Erro ao contar cartões por collectionId: $e');
     return [];
   }
@@ -329,23 +346,49 @@ class PokemonDatabaseHelper {
         'logoImg': collection.logoImg
       });
     } catch (e) {
+      // ignore: avoid_print
       print('Error inserting Collection: $e');
       return -1; // Retorna um valor que indica falha na inserção
     }
   }
 
   // Método para obter todas as coleções do banco de dados
-  Future<List<Collection>> getCollections() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('collections');
+  Future<List<Collection>> getAllCollections() async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT collections.*, 
+            SUM(CASE WHEN user_data.tenho = 1 THEN 1 ELSE 0 END) AS totalHave
+      FROM collections
+      LEFT JOIN pokemon_cards ON collections.id = pokemon_cards.collectionId
+      LEFT JOIN user_data ON pokemon_cards.id = user_data.id
+      GROUP BY collections.id;
+    ''');
+    print(maps);
     return List.generate(maps.length, (i) {
       return Collection.fromMap(maps[i]);
     });
   }
 
+  Future<Collection?> getCollectionById(String collectionId) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'collections',
+      where: 'id = ?',
+      whereArgs: [collectionId],
+    );
+
+    if (result.isEmpty) {
+      // Retorna nulo se a coleção não for encontrada
+      return null;
+    }
+
+    return Collection.fromMap(result.first);
+  }
+
+
   Future<List<Map<String, dynamic>>> getAllCollectionTotal() async {
     try {
-      final Database db = await instance.database;
+      final db = await instance.database;
 
       final List<Map<String, dynamic>> result = await db.query(
         'collections',
@@ -370,14 +413,26 @@ class PokemonDatabaseHelper {
 
       return result;
     } catch (e) {
+      // ignore: avoid_print
       print('Erro ao contar cartões por collectionId: $e');
       return [];
     }
   }
 
+  Future<void> removeAllPokemonCards() async {
+    final db = await instance.database;
+    await db.delete('pokemon_cards');
+  }
 
+  Future<void> removeAllCollections() async {
+    final db = await instance.database;
+    await db.delete('collections');
+  }
+  Future<void> removeAllUserData() async {
+    final db = await instance.database;
+    await db.delete('user_data');
+  }
 
-  
   // Método para contar o número de cartas de Pokémon no banco de dados
   Future<int> countPokemon() async {
     final db = await database;
@@ -412,6 +467,7 @@ class PokemonDatabaseHelper {
     final collectionsFile = File('collections.csv');
     await collectionsFile.writeAsString(csvCollections.map((row) => row.join(',')).join('\n'));
 
+    // ignore: avoid_print
     print('Exportação para CSV concluída.');
   }
 

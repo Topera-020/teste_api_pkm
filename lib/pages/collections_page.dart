@@ -18,6 +18,7 @@ class CollectionsPage extends StatefulWidget {
 
 class CollectionsPageState extends State<CollectionsPage> {
   int selectedCardSize = 2;
+
   // Lista de todas as coleções e lista filtrada após aplicar pesquisa e ordenação
   List<Collection> pokemonCollections = [];
   List<Collection> filteredCollections = [];
@@ -38,7 +39,9 @@ class CollectionsPageState extends State<CollectionsPage> {
   int selectedOrderIndex = 1;
 
   // Opção atual de ordenação
-  String sortingOption = 'Data';
+  List<String> sortingList = ['Data', 'Nome', 'Série', '# Cartas'];
+  late String sortingOption = sortingList[0];
+  
 
   // Função de comparação para a ordenação das coleções
   int Function(Collection, Collection) get compareFunction {
@@ -47,6 +50,10 @@ class CollectionsPageState extends State<CollectionsPage> {
         return (a, b) => a.releaseDate.compareTo(b.releaseDate);
       case 'Nome':
         return (a, b) => a.name.compareTo(b.name);
+      case 'Série':
+        return (a, b) => a.series.compareTo(b.series);
+      case '# Cartas':
+        return (a, b) => a.printedTotal.compareTo(b.printedTotal);
       default:
         return (a, b) => 0;
     }
@@ -61,7 +68,7 @@ class CollectionsPageState extends State<CollectionsPage> {
   // Método assíncrono para buscar dados das coleções no banco de dados
   Future<void> fetchData() async {
     final List<Collection> collections =
-        await PokemonDatabaseHelper.instance.getCollections();
+        await PokemonDatabaseHelper.instance.getAllCollections();
 
     setState(() {
       pokemonCollections = collections;
@@ -117,10 +124,12 @@ class CollectionsPageState extends State<CollectionsPage> {
         title: 'Sets Oficiais',
         searchFocusNode: _searchFocusNode,
       ),
+
       endDrawer: FiltersTab(
-        sortingOption: sortingOption,
+        selectedCardSize: selectedCardSize,
+        sortingList: sortingList,
         selectedOrderIndex: selectedOrderIndex,
-        selectedCardSize: selectedCardSize, // Adicione esta linha
+        sortingOption: sortingOption,
         onSortingChanged: (value) {
           setState(() {
             sortingOption = value;
@@ -155,10 +164,10 @@ class CollectionsPageState extends State<CollectionsPage> {
             : Padding(
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: selectedCardSize,
+                    crossAxisSpacing: 1.0/selectedCardSize,
+                    mainAxisSpacing: 1.0/selectedCardSize,
                   ),
                   itemCount: filteredCollections.length,
                   itemBuilder: (context, index) {

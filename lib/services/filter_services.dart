@@ -15,7 +15,10 @@ class FilterService {
     }).toList();
   }
 
-  
+  List<PokemonCard> filterPokemonCardsBySupertype(List<PokemonCard> allCards) {
+    return allCards.where((card) => card.supertype.toLowerCase() == 'pokémon').toList();
+  }
+
   List<PokemonCard> filterCards(List<PokemonCard> allCards, String searchTerm) {
     searchTerm = searchTerm.toLowerCase();
     return allCards.where((card) {
@@ -24,7 +27,7 @@ class FilterService {
           card.name.toLowerCase().contains(searchTerm) ||
           card.supertype.toLowerCase().contains(searchTerm) ||
           card.subtypes.toString().toLowerCase().contains(searchTerm) ||
-          card.number.toLowerCase().contains(searchTerm) ||
+          card.number.toString().contains(searchTerm) ||
           card.artist.toLowerCase().contains(searchTerm) ||
           card.rarity.toLowerCase().contains(searchTerm) ||
           card.nationalPokedexNumbers.toString().toLowerCase().contains(searchTerm) ||

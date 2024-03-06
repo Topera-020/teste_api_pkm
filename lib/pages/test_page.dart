@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:pokelens/models/collections_models.dart';
+import 'package:pokelens/data/database_helper.dart';
+import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/widgets/drawer_widget.dart';
 
 class TestPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class TestPage extends StatefulWidget {
 }
 
 class TestPageState extends State<TestPage> {
-  List<Collection> pokemonCollections = [];
+  List<PokemonCard> cardList = [];
 
   @override
   void initState() {
@@ -21,11 +22,9 @@ class TestPageState extends State<TestPage> {
   }
 
   Future<void> fetchData() async {
-    
+    cardList = await PokemonDatabaseHelper.instance.getPokemonCards() ?? [];
+    setState(() {}); // Atualiza o estado para reconstruir o widget com os novos dados
   }
-
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +34,15 @@ class TestPageState extends State<TestPage> {
       ),
       drawer: const DrawerWidget(),
       body: ListView.builder(
-        itemCount: pokemonCollections.length,
+        itemCount: cardList.length,
         itemBuilder: (context, index) {
-          final Collection collection = pokemonCollections[index];
+          final PokemonCard card = cardList[index];
           return ListTile(
-            title: Text(collection.name),
-            subtitle: Text('Type: ${collection.series}'),
+            title: Text(card.name),
+            subtitle: Text('id: ${card.id}'), 
           );
         },
       ),
-      
     );
   }
-
 }

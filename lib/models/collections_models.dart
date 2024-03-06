@@ -8,6 +8,7 @@ class Collection {
   String releaseDate;
   String symbolImg;
   String logoImg;
+  int totalHave;
 
   Collection({
     required this.id,
@@ -19,19 +20,10 @@ class Collection {
     required this.releaseDate,
     required this.symbolImg,
     required this.logoImg,
+    required this.totalHave
   });
 
-  factory Collection.fromJson(Map<String, dynamic> json) => Collection(
-        id: json["id"],
-        name: json["name"],
-        series: json["series"],
-        printedTotal: json["printedTotal"],
-        total: json["total"],
-        ptcgoCode: json["ptcgoCode"].toString(),
-        releaseDate: json["releaseDate"].toString(),
-        symbolImg: json["images"]["symbol"],
-        logoImg: json["images"]["logo"],
-      );
+  
 
   factory Collection.fromMap(Map<String, dynamic> data) => Collection(
     id: data['id'] ?? '',
@@ -39,10 +31,11 @@ class Collection {
     series: data['series'] ?? '',
     printedTotal: data['printedTotal'] ?? 0,
     total: data['total'] ?? 0,
-    ptcgoCode: data['ptcgoCode'] ?? '',
-    releaseDate: data['releaseDate'] ?? '',
-    symbolImg: data['symbolImg'] ?? '',
-    logoImg: data['logoImg'] ?? '',
+    ptcgoCode: data['ptcgoCode'].toString(),
+    releaseDate: data['releaseDate'].toString(),
+    symbolImg: data['symbolImg'] ?? data["images"]["symbol"] ?? '',
+    logoImg: data['logoImg'] ?? data["images"]["logo"]?? '',
+    totalHave: data['totalHave'] ?? 0,
   );
 
 
