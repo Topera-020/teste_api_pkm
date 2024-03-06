@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pokelens/widgets/drawer_widget.dart';
-import 'package:pokelens/widgets/update_data_widget.dart';
+import 'package:pokelens/widgets/global/drawer_widget.dart';
+import 'package:pokelens/widgets/update/update_data_widget.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

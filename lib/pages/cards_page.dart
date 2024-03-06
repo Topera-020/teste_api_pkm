@@ -4,11 +4,11 @@ import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/services/filter_services.dart';
-import 'package:pokelens/widgets/app_bar_widget.dart';
+import 'package:pokelens/widgets/global/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/widgets/cards_widget.dart';
-import 'package:pokelens/widgets/drawer_widget.dart';
-import 'package:pokelens/widgets/filter_tab_widget.dart';
+import 'package:pokelens/widgets/global/drawer_widget.dart';
+import 'package:pokelens/widgets/global/filter_tab_widget.dart';
 
 class CardsPage extends StatefulWidget {
   const CardsPage({super.key});

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
-import 'package:pokelens/widgets/drawer_widget.dart';
+import 'package:pokelens/widgets/global/drawer_widget.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});

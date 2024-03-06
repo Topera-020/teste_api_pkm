@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:pokelens/data/extensions/database_collections.dart';
 import 'package:pokelens/services/filter_services.dart';
-import 'package:pokelens/widgets/app_bar_widget.dart';
+import 'package:pokelens/widgets/global/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/collections_models.dart';
-import 'package:pokelens/widgets/drawer_widget.dart';
-import 'package:pokelens/widgets/filter_tab_widget.dart';
+import 'package:pokelens/widgets/global/drawer_widget.dart';
+import 'package:pokelens/widgets/global/filter_tab_widget.dart';
 import 'package:pokelens/widgets/collections_widget.dart';
 
 class CollectionsPage extends StatefulWidget {

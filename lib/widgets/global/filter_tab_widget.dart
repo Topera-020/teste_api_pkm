@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokelens/widgets/card_size_selector_widget.dart';
+import 'package:pokelens/widgets/global/card_size_selector_widget.dart';
 
 // ignore: must_be_immutable
 class FiltersTab extends StatefulWidget {
