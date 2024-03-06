@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/services/filter_services.dart';
@@ -50,6 +51,7 @@ class CardsPageState extends State<CardsPage> {
         };
       default:
         return (a, b) {
+          // ignore: avoid_print
           print('erro: $sortingOption');
           return 0;
         };
@@ -70,7 +72,6 @@ class CardsPageState extends State<CardsPage> {
         sortingOption = sortingList[0];
         collectionId = collection.id;
         title = collection.name;
-        print('Page: Id da coleção: ${collection.id} $collectionId');
       }
 
       fetchData();
@@ -83,8 +84,6 @@ class CardsPageState extends State<CardsPage> {
   }
 
   Future<void> fetchData() async {
-    print('fetchData $collectionId');
-
     final List<PokemonCard>? cards =
         await PokemonDatabaseHelper.instance.getPokemonCards(
       collectionId: collectionId,
@@ -96,6 +95,7 @@ class CardsPageState extends State<CardsPage> {
         filteredCards = List.from(pokemonCards);
       });
     } else {
+      // ignore: avoid_print
       print('A lista de cartas é nula.');
     }
   }
@@ -134,7 +134,7 @@ class CardsPageState extends State<CardsPage> {
     if (args != null) {
       final Collection? collection = args['collection'] as Collection?;
       collectionId = collection?.id;
-      print('Page: Id da coleção: ${collection?.id} $collectionId');
+      //print('Page: Id da coleção: ${collection?.id} $collectionId');
     }
 
     return Scaffold(

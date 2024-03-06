@@ -1,6 +1,11 @@
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/extensions/database_collections.dart';
 import 'package:pokelens/data/database_helper.dart';
+import 'package:pokelens/data/extensions/database_init.dart';
+import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/services/remote_services.dart';
@@ -46,6 +51,7 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
           await PokemonDatabaseHelper.instance.insertCollection(collection);
           progress++;
         } catch (e) {
+          // ignore: avoid_print
           print('Error adding collection: $e');
         }
       }
@@ -81,6 +87,7 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
 
       return combinedList;
     } catch (e) {
+      // ignore: avoid_print
       print('Erro ao combinar listas de coleções: $e');
       return [];
     }
@@ -98,8 +105,8 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
         //if (collectionId == 'xy11'){
           if (totalCollections > totalCardsDB) {
             List<PokemonCard>? cardsAPI = await RemoteService().getAllCardsByCollection(collectionId);
-            print('Total de cartões na coleção $collectionId: $totalCollections');
-            print('Total de cartões no banco de dados: $totalCardsDB');
+            //print('Total de cartões na coleção $collectionId: $totalCollections');
+            //print('Total de cartões no banco de dados: $totalCardsDB');
             
             for (PokemonCard card in cardsAPI) {
               progress++;
@@ -112,6 +119,7 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
                   setState(() {});
                 }
               } catch (e) {
+                // ignore: avoid_print
                 print('Erro ao adicionar cartão: $e');
               }
             }
@@ -119,6 +127,7 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
           } else {
             progress += totalCardsDB;
             //print('$progress / $progressGoal  = ${progress/progressGoal}');
+            // ignore: avoid_print
             print('Os cartões da coleção $collectionId já estão atualizados');
           }
        // }

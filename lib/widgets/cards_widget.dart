@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/extensions/database_collections.dart';
+import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/pages/individual_card_page.dart';
 
@@ -59,14 +61,17 @@ class CardWidgetState extends State<CardWidget> {
     );
   }
 
-  Widget buildInkWell(BuildContext context) {
+  InkWell buildInkWell(BuildContext context) {
     return InkWell(
       onTap: () {
         setState(() {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => IndividualCardPage(pokemonCard: widget.pokemonCard),
+              builder: (context) => IndividualCardPage(
+                pokemonCard: widget.pokemonCard,
+                collectionFuture: PokemonDatabaseHelper.instance.getCollectionById(widget.pokemonCard.collectionId),
+              ),
             ),
           );
         });

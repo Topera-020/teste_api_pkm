@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
+import 'package:pokelens/widgets/card_action_widget.dart';
 import 'package:pokelens/widgets/collections_widget.dart';
+import 'package:pokelens/widgets/info_text_widget.dart';
 
-class IndividualCardPage extends StatelessWidget {
+class IndividualCardPage extends StatefulWidget {
   final PokemonCard pokemonCard;
+  final Future<Collection?> collectionFuture;
 
-  const IndividualCardPage({Key? key, required this.pokemonCard}) : super(key: key);
+  const IndividualCardPage({
+    super.key,
+    required this.pokemonCard,
+    required this.collectionFuture,
+  });
+
+  @override
+  IndividualCardPageState get createState => IndividualCardPageState();
+}
+
+class IndividualCardPageState extends State<IndividualCardPage> {
+  late List<bool> isSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    isSelected = [widget.pokemonCard.tenho, widget.pokemonCard.preciso];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(pokemonCard.name),
+        title: Text(widget.pokemonCard.name),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // imagem da carta
               Container(
                 width: double.infinity,
                 height: 530,
@@ -29,7 +49,7 @@ class IndividualCardPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Image.network(
-                  pokemonCard.large,
+                  widget.pokemonCard.large,
                   width: double.infinity,
                   height: 530,
                   fit: BoxFit.cover,
@@ -43,41 +63,101 @@ class IndividualCardPage extends StatelessWidget {
                   errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                     return Center(
                       child: Icon(
-                        Icons.broken_image_outlined,
+                        Icons.image_not_supported,
                         color: Theme.of(context).iconTheme.color,
                       ),
                     );
                   },
                 ),
               ),
-              const SizedBox(height: 16),
-              Text('Id único: ${pokemonCard.id}'),
-              Text('nationalPokedexNumbers: ${pokemonCard.nationalPokedexNumbers.join(', ')}'),
-              Text('Classe: ${pokemonCard.supertype} - ${pokemonCard.subtypes.join(', ')}'),
-              Text('Tipo: ${pokemonCard.types.join(', ')}'),
-              Text('HP: ${pokemonCard.hp}'),
-              Text('Artista: ${pokemonCard.artist}'),
-              Text('Número na coleção: ${pokemonCard.number}'),
-              Text('Nome da coleção: ${pokemonCard.collectionName}'),
-              Text('Custo de recuo: ${pokemonCard.convertedRetreatCost}'),
-              Center(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  child: FutureBuilder<Collection?>(
-                    future: PokemonDatabaseHelper.instance.getCollectionById(pokemonCard.collectionId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Erro ao carregar a coleção: ${snapshot.error}');
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        return CollectionsCardWidget(collection: snapshot.data!);
-                      } else {
-                        return const Text('Coleção não encontrada.');
-                      }
-                    },
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 150), // Defina um tamanho mínimo adequado
+                    child: buildRoundIconButton(
+                      selectedText: 'Tenho',
+                      unselectedText: 'Não tenho',
+                      icon: Icons.check,
+                      isSelected: widget.pokemonCard.tenho,
+                      onPressed: () {
+                        setState(() {
+                          widget.pokemonCard.tenho = !widget.pokemonCard.tenho;
+                        });
+                      },
+                    ),
                   ),
+                  const SizedBox(width: 16), // Adicione um espaço entre os botões se necessário
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 150), // Defina um tamanho mínimo adequado
+                    child: buildRoundIconButton(
+                      selectedText: 'Preciso',
+                      unselectedText: 'Não preciso',
+                      icon: Icons.remove_red_eye,
+                      isSelected: widget.pokemonCard.preciso,
+                      onPressed: () {
+                        setState(() {
+                          widget.pokemonCard.preciso = !widget.pokemonCard.preciso;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+
+              // informações
+              InfoTextWidget(
+                title: 'Nome:',
+                text: widget.pokemonCard.name,
+              ),
+              InfoTextWidget(
+                title: 'Classe:',
+                text: widget.pokemonCard.supertype,
+              ),
+              InfoTextWidget(
+                title: 'Sub-classe:',
+                text: widget.pokemonCard.subtypes.join(', '),
+              ),
+              InfoTextWidget(
+                title: 'Tipo:',
+                text: widget.pokemonCard.types.join(', '),
+              ),
+              if (widget.pokemonCard.hp.isNotEmpty)
+                InfoTextWidget(
+                  title: 'HP:',
+                  text: widget.pokemonCard.hp,
+                ),
+              InfoTextWidget(
+                title: 'Número na Pokédex:',
+                text: widget.pokemonCard.nationalPokedexNumbers.join(', '),
+              ),
+              InfoTextWidget(title: 'Artista:', text: widget.pokemonCard.artist),
+              InfoTextWidget(
+                title: 'Número na coleção:',
+                text: widget.pokemonCard.number,
+              ),
+              InfoTextWidget(
+                title: 'Custo de recuo:',
+                text: widget.pokemonCard.convertedRetreatCost.toString(),
+              ),
+              SizedBox(
+                height: 200,
+                width: 200,
+                child: FutureBuilder<Collection?>(
+                  future: widget.collectionFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Erro ao carregar a coleção: ${snapshot.error}');
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      return CollectionsCardWidget(collection: snapshot.data!);
+                    } else {
+                      return const Text('Coleção não encontrada.');
+                    }
+                  },
                 ),
               ),
             ],

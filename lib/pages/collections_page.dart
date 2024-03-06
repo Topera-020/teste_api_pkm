@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/extensions/database_collections.dart';
 import 'package:pokelens/services/filter_services.dart';
 import 'package:pokelens/widgets/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';

@@ -137,7 +137,8 @@ class CollectionsCardWidget extends StatelessWidget {
 Widget buildInkWell(BuildContext context) {
   return InkWell(
     onTap: () {
-      print('CW: collection ${collection.toMap()}'); 
+      //print('CW: collection ${collection.toMap()}'); 
+      Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushNamed(
         context,
         '/cardsPage',

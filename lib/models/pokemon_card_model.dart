@@ -18,9 +18,9 @@ class PokemonCard {
   final String releaseDate;
   final String collectionName;
   final String series;
-  final List<String> tags;
-  final bool tenho;
-  final bool preciso;
+  List<String> tags;
+  bool tenho;
+  bool preciso;
   final int numberINT;
 
   PokemonCard({
@@ -92,7 +92,6 @@ class PokemonCard {
         return [];
       }
     } else if (value is List<dynamic>) {
-      print('value $value');
       // Se já for uma lista, verifica se cada item é uma string e converte para string
       return value.map((item) => item.toString()).toList();
     } else {
