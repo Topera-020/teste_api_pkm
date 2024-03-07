@@ -31,9 +31,12 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
 
   Future<void> updateDB() async {
     progress = 0;
+    print('update collections');
     if (mounted) {setState(() {isUpdating = true;});}
-
+    
     await updateCollections(() => setState(() {}));
+    
+    await cauntData();
     if (mounted) {setState(() {});}
     
     await updatePokemonCards(() => setState(() {}));

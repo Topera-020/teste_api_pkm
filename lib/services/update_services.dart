@@ -1,7 +1,6 @@
 
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/data/extensions/database_collections.dart';
-import 'package:pokelens/data/extensions/database_init.dart';
 import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
@@ -14,6 +13,7 @@ extension CollectionsExtension on UpdateDataWidgetState{
   
   Future<void> updateCollections(Function() setState) async {
     final List<Collection>? collections = await RemoteService().getCollections();
+
     if (collections != null) {
       for (Collection collection in collections) {
         try {
@@ -48,7 +48,6 @@ extension CollectionsExtension on UpdateDataWidgetState{
             //print('$progress / $progressGoal  = ${progress/progressGoal}');
             try {
               await PokemonDatabaseHelper.instance.insertPokemonCard(card);
-              await PokemonDatabaseHelper.instance.insertUserData(card.id);
               countPokemonDB++;
 
               if (mounted) {setState();}
@@ -68,7 +67,7 @@ extension CollectionsExtension on UpdateDataWidgetState{
 
         } else {
           progress += totalCardsDB;
-          //print('$progress / $progressGoal  = ${progress/progressGoal}');
+          print('$progress / $progressGoal  = ${progress/progressGoal}');
           // ignore: avoid_print
           print('Os cartões da coleção $collectionId já estão atualizados');
         }

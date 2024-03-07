@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
-import 'package:pokelens/services/filter_services.dart';
+
 import 'package:pokelens/widgets/global/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/widgets/cards_widget.dart';
@@ -26,7 +26,7 @@ class CardsPageState extends State<CardsPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearchExpanded = false;
   int selectedOrderIndex = 0;
-  FilterService filterService = FilterService();
+  //FilterService filterService = FilterService();
   final FocusNode _searchFocusNode = FocusNode();
   List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista'];
   late String sortingOption = sortingList[0];
@@ -90,10 +90,14 @@ class CardsPageState extends State<CardsPage> {
     );
 
     if (cards != null) {
-      setState(() {
-        pokemonCards = cards;
-        filteredCards = List.from(pokemonCards);
-      });
+       
+      if (mounted) {
+        setState(() {
+          pokemonCards = cards;
+          filteredCards = List.from(pokemonCards);
+        });
+      }
+
     } else {
       // ignore: avoid_print
       print('A lista de cartas é nula.');
@@ -102,22 +106,27 @@ class CardsPageState extends State<CardsPage> {
 
   void filterCards() {
     String searchTerm = searchController.text;
-    setState(() {
-      filteredCards = filterService.filterCards(pokemonCards, searchTerm);
-      sortCards();
-    });
+    if (mounted) {
+      setState(() {
+        // = filterService.filterCards(pokemonCards, searchTerm);
+        sortCards();
+      });
+    }
   }
 
   void sortCards() {
     if(sortingOption=='# Pokédex'){
-      filteredCards = filterService.filterPokemonCardsBySupertype(filteredCards);
-    setState(() {
-      filteredCards = filterService.sortList(
-        filteredCards,
-        compareFunction,
-        ascending: selectedOrderIndex == 0,
-      );
-    });}
+      //filteredCards = filterService.filterPokemonCardsBySupertype(filteredCards);
+      if (mounted) {
+        setState(() {
+          //filteredCards = filterService.sortList(
+           // filteredCards,
+        //  compareFunction,
+        //  ascending: selectedOrderIndex == 0,
+         // );
+        });
+      }
+    }
   }
 
   @override

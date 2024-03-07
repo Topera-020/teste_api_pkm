@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 // Método para inserir uma carta de Pokémon no banco de dados
 extension PokemonCardExtension on PokemonDatabaseHelper{
@@ -32,10 +33,18 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
 
       return 1; // Retorna 1 para indicar sucesso na inserção
     } catch (e) {
-      // ignore: avoid_print
-      print('Error inserting PokemonCard: $e');
-      return -1; // Retorna um valor que indica falha na inserção
-    }
+        if (e is DatabaseException &&
+            e.isUniqueConstraintError('pokemon_cards.id')) {
+          // Tratamento específico para violação de chave única
+          // ignore: avoid_print
+          print('Erro: Já existe um Pokémon com o mesmo ID.');
+        } else {
+          // Outro tratamento de erro genérico
+          // ignore: avoid_print
+          print('Erro ao inserir PokemonCard: $e');
+        }
+        return -1; // Retorna um valor que indica falha na inserção
+      }
   }
 
   // Método para obter todas as cartas de Pokémon do banco de dados
@@ -45,27 +54,31 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
 
     if (collectionId != null) {
       maps = await db.rawQuery('''
-        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, ud.tags, ud.tenho, ud.preciso
+        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, GROUP_CONCAT(t.name) AS tags
         FROM pokemon_cards pc
         JOIN collections c ON pc.collectionId = c.id
-        JOIN user_data ud ON pc.id = ud.id
+        LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
+        LEFT JOIN tags t ON cta.tag_id = t.id
         WHERE pc.collectionId = ?
-        ORDER BY numberINT ASC
+        GROUP BY pc.id
+        ORDER BY pc.numberINT ASC
       ''', [collectionId]);
     } else {
       maps = await db.rawQuery('''
-        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, ud.tags, ud.tenho, ud.preciso
+        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, GROUP_CONCAT(t.name) AS tags
         FROM pokemon_cards pc
         JOIN collections c ON pc.collectionId = c.id
-        JOIN user_data ud ON pc.id = ud.id
-        ORDER BY releaseDate ASC
+        LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
+        LEFT JOIN tags t ON cta.tag_id = t.id
+        GROUP BY pc.id
+        ORDER BY pc.numberINT ASC
       ''');
     }
 
-    //print('$collectionId length: ${maps.length}');
     return List.generate(maps.length, (i) {
       PokemonCard card = PokemonCard.fromMap(maps[i]);
       return card;
     });
   }
+
 }

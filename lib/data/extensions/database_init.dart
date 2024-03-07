@@ -51,38 +51,43 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
           )
         ''');
 
+        // Tabela para armazenar todas as tags individuais
+        await db.execute('''
+          CREATE TABLE tags(
+            id TEXT PRIMARY KEY,
+            name TEXT
+          )
+        ''');
+
         // Tabela para armazenar dados das listas de cartas do usuário
         await db.execute('''
           CREATE TABLE user_data(
             id TEXT PRIMARY KEY,
             tags TEXT,
-            tenho BOOLEAN,
-            preciso BOOLEAN,
+            tenho INTEGER,
+            preciso INTEGER,
             FOREIGN KEY (id) REFERENCES pokemon_cards(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE card_tag_association(
+            id INTEGER PRIMARY KEY,
+            card_id TEXT,
+            tag_id TEXT,
+            FOREIGN KEY (card_id) REFERENCES pokemon_cards(id),
+            FOREIGN KEY (tag_id) REFERENCES tags(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE assets (
+            name TEXT PRIMARY KEY,
+            class TEXT,
+            imageBase64 TEXT
           )
         ''');
       },
     );
-  }
-
-  Future<int> insertUserData(String id) async {
-    final db = await database;
-    try {
-      await db.transaction((txn) async {
-        // Inserir na tabela user_data (valores padrão)
-        await txn.insert('user_data', {
-          'id': id,
-          'tags': '[]', // Valor padrão para tags
-          'tenho': 0, // Valor padrão para tenho
-          'preciso': 0, // Valor padrão para preciso
-        });
-      });
-
-      return 1; // Retorna 1 para indicar sucesso na inserção
-    } catch (e) {
-      // ignore: avoid_print
-      print('Error inserting user_data: $e');
-      return -1; // Retorna um valor que indica falha na inserção
-    }
   }
 }

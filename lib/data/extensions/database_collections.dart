@@ -14,7 +14,8 @@ extension CollectionsExtension on PokemonDatabaseHelper{
         FROM collections
         LEFT JOIN pokemon_cards ON collections.id = pokemon_cards.collectionId
         LEFT JOIN user_data ON pokemon_cards.id = user_data.id
-        GROUP BY collections.id;
+        GROUP BY collections.id
+        ORDER BY collections.releaseDate DESC;
       ''');
       return List.generate(maps.length, (i) {
         return Collection.fromMap(maps[i]);

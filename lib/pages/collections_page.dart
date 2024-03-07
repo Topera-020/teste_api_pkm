@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:pokelens/data/extensions/database_collections.dart';
-import 'package:pokelens/services/filter_services.dart';
+//import 'package:pokelens/services/filter_services.dart';
 import 'package:pokelens/widgets/global/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/collections_models.dart';
@@ -31,7 +31,7 @@ class CollectionsPageState extends State<CollectionsPage> {
   bool isSearchExpanded = false;
 
   // Serviço de filtro para manipulação das coleções
-  FilterService filterService = FilterService();
+  //FilterService filterService = FilterService();
 
   // Nodo de foco para o campo de pesquisa
   final FocusNode _searchFocusNode = FocusNode();
@@ -83,7 +83,7 @@ class CollectionsPageState extends State<CollectionsPage> {
   void filterCollections() {
     String searchTerm = searchController.text;
     setState(() {
-      filteredCollections = filterService.filterCollections(pokemonCollections, searchTerm);
+      //filteredCollections = filterService.filterCollections(pokemonCollections, searchTerm);
       sortCollections(); // Reaplica a ordenação após a filtragem
     });
   }
@@ -91,11 +91,11 @@ class CollectionsPageState extends State<CollectionsPage> {
   // Método para ordenar as coleções com base na opção selecionada
   void sortCollections() {
     setState(() {
-      filteredCollections = filterService.sortList(
-        filteredCollections,
-        compareFunction,
-        ascending: selectedOrderIndex == 0,
-      );
+      //filteredCollections = filterService.sortList(
+        //filteredCollections,
+        //compareFunction,
+        //ascending: selectedOrderIndex == 0,
+      //);
     });
   }
 

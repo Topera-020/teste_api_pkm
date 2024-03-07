@@ -49,13 +49,15 @@ class PokemonCard {
   
   
   factory PokemonCard.fromMap(Map<String, dynamic> map) {
-    //para recuperar do SQL
-    List<String> tags = [];
+    List<String> tags = map['tags']?.split(',') ?? [];
+    bool tenho = tags.contains('tenho');
+    bool preciso = tags.contains('preciso');
+
     return PokemonCard(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
-      small: map['small'] ?? map["images"]["small"] ?? '',
-      large: map['large'] ?? map["images"]["large"] ?? '',
+      small: map['small'] ?? (map["images"]?["small"] ?? ''),
+      large: map['large'] ?? (map["images"]?["large"] ?? ''),
       supertype: map['supertype'] ?? '',
       subtypes: convertToList(map['subtypes']),
       hp: map['hp'] ?? '',
@@ -74,11 +76,13 @@ class PokemonCard {
 
       //user_data
       tags: tags,
-      tenho: map['tenho'] == 1,
-      preciso: map['preciso'] == 1,
+      tenho: tenho,
+      preciso: preciso,
+
       numberINT: map['numberINT'] ?? extractDigits(map['number']) ?? 0,
     );
   }
+
 
   static List<String> convertToList(dynamic value) {
     if (value is String) {
@@ -99,7 +103,6 @@ class PokemonCard {
     }
   }
 
-
   static List<int> convertToIntList(dynamic value) {
     if (value is String) {
 
@@ -117,15 +120,13 @@ class PokemonCard {
     }
   }
 
-
-
   static int extractDigits(String input) {
     String digits = input.replaceAll(RegExp(r'[^0-9]'), '');
     return int.tryParse(digits) ?? 0;
   }
 
   Map<String, dynamic> toMap() { 
-    var map = {
+    return {
       'id': id,
       'name': name,
       'small': small,
@@ -145,13 +146,8 @@ class PokemonCard {
       'series': series,
       'releaseDate': releaseDate,
       
-      'tags': tags.toString(),
-      'tenho': tenho, 
-      'preciso': preciso,
+      'tags': tags.join(','),
       'numberINT': numberINT,
     };
-
-    //para inserir no SQL
-    return map;
   }
 }

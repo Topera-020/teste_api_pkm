@@ -21,7 +21,7 @@ class IndividualCardPage extends StatefulWidget {
 
 class IndividualCardPageState extends State<IndividualCardPage> {
   late List<bool> isSelected;
-
+  
   @override
   void initState() {
     super.initState();
@@ -106,7 +106,10 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                 ],
               ),
 
-
+              InfoTextWidget(
+                title: 'número:',
+                text: widget.pokemonCard.numberINT.toString(),
+              ),
               // informações
               InfoTextWidget(
                 title: 'Nome:',
