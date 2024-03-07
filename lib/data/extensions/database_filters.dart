@@ -1,17 +1,18 @@
-
-
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 
-extension CollectionsExtension on PokemonDatabaseHelper{
+extension CollectionsExtension on PokemonDatabaseHelper {
   Future<List<PokemonCard>?> getFilteredAndSortedPokemonCards({
     String? collectionId,
     String? searchTerm,
     String? filterColumn,
     bool? isAscending,
+    String? orderBy,
+    String primaryOrderByClause = 'c.releaseDate',
+    String secundaryOrderByClause = 'pc.numberINT',
   }) async {
     final db = await database;
-
+    print('teste $collectionId');
     // Monta a cláusula WHERE baseada no searchTerm e filterColumn
     String whereClause = '';
     List<dynamic> whereArgs = [];
@@ -21,9 +22,9 @@ extension CollectionsExtension on PokemonDatabaseHelper{
     }
 
     // Monta a cláusula ORDER BY baseada na ordenação e na direção
-    String orderByClause = 'pc.numberINT';
     if (isAscending != null) {
-      orderByClause += isAscending ? ' ASC' : ' DESC';
+      primaryOrderByClause += isAscending ? ' ASC' : ' DESC';
+      secundaryOrderByClause += isAscending ? ' ASC' : ' DESC';
     }
 
     // Monta a consulta SQL final
@@ -34,9 +35,9 @@ extension CollectionsExtension on PokemonDatabaseHelper{
       LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
       LEFT JOIN tags t ON cta.tag_id = t.id
       ${whereClause.isNotEmpty ? 'WHERE $whereClause' : ''}
-      ${collectionId != null ? 'AND pc.collectionId = ?' : ''}
+      ${collectionId != null ? (whereClause.isNotEmpty ? 'AND' : 'WHERE') + ' pc.collectionId = ?' : ''}
       GROUP BY pc.id
-      ORDER BY $orderByClause
+      ORDER BY $primaryOrderByClause, $secundaryOrderByClause
     ''';
 
     // Adiciona collectionId aos argumentos se fornecido
@@ -44,13 +45,8 @@ extension CollectionsExtension on PokemonDatabaseHelper{
       whereArgs.add(collectionId);
     }
 
-    // Executa a consulta
+    // Executa a consulta e mapeia diretamente para objetos PokemonCard
     List<Map<String, dynamic>> maps = await db.rawQuery(query, whereArgs);
-
-    // Mapeia os resultados para objetos PokemonCard
-    return List.generate(maps.length, (i) {
-      PokemonCard card = PokemonCard.fromMap(maps[i]);
-      return card;
-    });
+    return maps.map((map) => PokemonCard.fromMap(map)).toList();
   }
 }

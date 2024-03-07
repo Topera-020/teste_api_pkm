@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/extensions/database_filters.dart';
 import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
@@ -20,51 +21,24 @@ class CardsPage extends StatefulWidget {
 class CardsPageState extends State<CardsPage> {
   int selectedCardSize = 3;
   List<PokemonCard> pokemonCards = [];
-  List<PokemonCard> filteredCards = [];
+  
   String title = 'Todas as cartas';
   String? collectionId;
+
   TextEditingController searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   bool isSearchExpanded = false;
   int selectedOrderIndex = 0;
-  //FilterService filterService = FilterService();
-  final FocusNode _searchFocusNode = FocusNode();
+  
   List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista'];
   late String sortingOption = sortingList[0];
 
-  int Function(PokemonCard, PokemonCard) get compareFunction {
-    switch (sortingOption) {
-      case 'Data':
-        return (a, b) => a.releaseDate.compareTo(b.releaseDate);
-      case 'Nome':
-        return (a, b) => a.name.compareTo(b.name);
-      case 'Hp':
-        return (a, b) => a.hp.compareTo(b.hp);
-      case 'Tipos':
-        return (a, b) => a.types[0].compareTo(b.types[0]);
-      case 'Número':
-        return (a, b) => a.numberINT.compareTo(b.numberINT);
-      case 'Artista':
-        return (a, b) => a.artist.compareTo(b.artist);
-      case '# Pokédex':
-        return (a, b) {
-          return a.nationalPokedexNumbers[0].compareTo(b.nationalPokedexNumbers[0]);
-        };
-      default:
-        return (a, b) {
-          // ignore: avoid_print
-          print('erro: $sortingOption');
-          return 0;
-        };
-    }
-  }
-
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     
-
     if (args != null) {
       final Collection? collection = args['collection'] as Collection?;
       if (collection != null) {
@@ -74,7 +48,10 @@ class CardsPageState extends State<CardsPage> {
         title = collection.name;
       }
 
-      fetchData();
+     pokemonCards =(await PokemonDatabaseHelper.instance.getPokemonCards(
+        collectionId: collectionId,
+      ))!;
+
     }
   }
 
@@ -83,56 +60,21 @@ class CardsPageState extends State<CardsPage> {
     super.initState();
   }
 
-  Future<void> fetchData() async {
-    final List<PokemonCard>? cards =
-        await PokemonDatabaseHelper.instance.getPokemonCards(
-      collectionId: collectionId,
-    );
-
-    if (cards != null) {
-       
-      if (mounted) {
-        setState(() {
-          pokemonCards = cards;
-          filteredCards = List.from(pokemonCards);
-        });
-      }
-
-    } else {
-      // ignore: avoid_print
-      print('A lista de cartas é nula.');
-    }
-  }
-
-  void filterCards() {
-    String searchTerm = searchController.text;
-    if (mounted) {
-      setState(() {
-        // = filterService.filterCards(pokemonCards, searchTerm);
-        sortCards();
-      });
-    }
-  }
-
-  void sortCards() {
-    if(sortingOption=='# Pokédex'){
-      //filteredCards = filterService.filterPokemonCardsBySupertype(filteredCards);
-      if (mounted) {
-        setState(() {
-          //filteredCards = filterService.sortList(
-           // filteredCards,
-        //  compareFunction,
-        //  ascending: selectedOrderIndex == 0,
-         // );
-        });
-      }
-    }
-  }
 
   @override
   void dispose() {
     _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void>  sortCards() async {
+      pokemonCards = (await PokemonDatabaseHelper.instance.getFilteredAndSortedPokemonCards(
+        collectionId: collectionId,
+        searchTerm: searchController.text,
+        isAscending: selectedOrderIndex == 1,
+      ))!;
+      
+      if (mounted) {setState(() { });}
   }
 
   @override
@@ -158,7 +100,6 @@ class CardsPageState extends State<CardsPage> {
         onSearchChanged: (value) {
           setState(() {
             searchController.text = value;
-            filterCards();
           });
         },
         title: title,
@@ -192,7 +133,7 @@ class CardsPageState extends State<CardsPage> {
         onTap: () {
           _searchFocusNode.unfocus();
         },
-        child: filteredCards.isEmpty
+        child: pokemonCards.isEmpty
             ? const Center(
                 child: Text(
                   'Nenhuma carta disponível.',
@@ -208,10 +149,10 @@ class CardsPageState extends State<CardsPage> {
                     crossAxisSpacing: 6.0/selectedCardSize,
                     mainAxisSpacing: 8.0,
                   ),
-                  itemCount: filteredCards.length,
+                  itemCount: pokemonCards.length,
                   itemBuilder: (context, index) {
                     return CardWidget(
-                      pokemonCard: filteredCards[index],
+                      pokemonCard: pokemonCards[index],
                     );
                   },
                 ),
