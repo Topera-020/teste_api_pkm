@@ -107,7 +107,8 @@ class PokemonDatabaseHelper {
   }
   Future<void> removeAllUserData() async {
     final db = await instance.database;
-    await db.delete('user_data');
+    await db.delete('card_tag_association');
+    await db.delete('tags');
   }
 
   // Método para contar o número de cartas de Pokémon no banco de dados

@@ -137,7 +137,7 @@ class CollectionsCardWidget extends StatelessWidget {
 Widget buildInkWell(BuildContext context) {
   return InkWell(
     onTap: () {
-      print('CollectionWidget: collection ${collection.id}'); 
+      //print('CollectionWidget: collection ${collection.id}'); 
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushNamed(
         context,

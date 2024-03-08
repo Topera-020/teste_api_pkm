@@ -30,12 +30,12 @@ extension CollectionsExtension on PokemonDatabaseHelper {
     bool? isAscending1,
     bool? isAscending2,
     String primaryOrderByClause = 'releaseDate',
-    String secundaryOrderByClause = 'releaseDate',
+    String secondaryOrderByClause = 'releaseDate',
   }) async {
     final db = await database;
 
     primaryOrderByClause = mapOrderBy(primaryOrderByClause);
-    secundaryOrderByClause = mapOrderBy(secundaryOrderByClause);
+    secondaryOrderByClause = mapOrderBy(secondaryOrderByClause);
 
     // Monta a cláusula WHERE baseada no searchTerm e filterColumn
     String whereClause = '';
@@ -92,7 +92,7 @@ extension CollectionsExtension on PokemonDatabaseHelper {
 
     // Monta a cláusula ORDER BY baseada na ordenação e na direção
     String orderClause = '$primaryOrderByClause ${isAscending1 != null ? (isAscending1 ? 'ASC' : 'DESC') : 'DESC'}, '
-        '$secundaryOrderByClause ${isAscending2 != null ? (isAscending2 ? 'ASC' : 'DESC') : 'DESC'}';
+        '$secondaryOrderByClause ${isAscending2 != null ? (isAscending2 ? 'ASC' : 'DESC') : 'DESC'}';
 
     String query = '''
       SELECT *
@@ -133,7 +133,7 @@ extension CollectionsExtension on PokemonDatabaseHelper {
     );
 
     if (result.isNotEmpty) {
-      print('result $result');
+      //print('result $result');
       return Collection.fromMap(result.first);
     } else {
       // Retorna um mapa vazio se não encontrar a coleção

@@ -62,6 +62,7 @@ class RemoteService {
   }
 
   Future<List<PokemonCard>> getAllCardsByCollection(String collectionId) async {
+    print('getAllCardsByCollection');
     int pageNumber = 1;
     List<Map<String, dynamic>> allCards = [];
     int totalCount = 0;
@@ -78,6 +79,7 @@ class RemoteService {
       return [];
     }
 
+    print(allCards);
     final List<PokemonCard> listCards = allCards.map((cardData) {
       return PokemonCard.fromMap(cardData);
     }).toList();

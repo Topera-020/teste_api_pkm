@@ -34,7 +34,7 @@ class CollectionsPageState extends State<CollectionsPage> {
   List<String> sortingList = ['Data', 'Nome', 'Série', '# Cartas'];
 
   late String primarySortingOption = sortingList[0];
-  late String secundarySortingOption = sortingList[1];
+  late String secondaryOrderByClause = sortingList[1];
 
   bool isAscending1 = false;
   bool isAscending2 = false;
@@ -70,7 +70,7 @@ class CollectionsPageState extends State<CollectionsPage> {
         isAscending2: isAscending2,
 
         primaryOrderByClause: primarySortingOption,
-        secundaryOrderByClause: secundarySortingOption,
+        secondaryOrderByClause: secondaryOrderByClause,
       );
       
       print(updatedCollections.map((e) => e.id));
@@ -134,10 +134,10 @@ class CollectionsPageState extends State<CollectionsPage> {
         onPrimarySortingChanged: (String? value) { 
           setState(() {
             primarySortingOption = value!;
-            if (secundarySortingOption == value){
+            if (secondaryOrderByClause == value){
               List<String> sortingList2 = List.from(sortingList);
               sortingList2.remove(primarySortingOption);
-              secundarySortingOption = sortingList2[0];
+              secondaryOrderByClause = sortingList2[0];
             }
             print('onPrimarySortingChanged - primarySortingOption: $primarySortingOption');
             _updateCollections();
@@ -155,18 +155,18 @@ class CollectionsPageState extends State<CollectionsPage> {
         }, 
         
         //Ordenação secundária
-        secundarySortingOption: secundarySortingOption,
-        onSecundarySortingChanged: (String? value) { 
+        secondaryOrderByClause: secondaryOrderByClause,
+        onsecondarySortingChanged: (String? value) { 
           setState(() {
-            secundarySortingOption = value!;
-            print('onSecundarySortingChanged - secundarySortingOption: $secundarySortingOption');
+            secondaryOrderByClause = value!;
+            print('onsecondarySortingChanged - secondaryOrderByClause: $secondaryOrderByClause');
             _updateCollections();
           });
         }, 
 
         //Ordenação secundária - sentido
         isAscending2: isAscending2, 
-        onSecundaryAscendingChanged: (bool value) {
+        onsecondaryAscendingChanged: (bool value) {
           setState(() {
             isAscending2 =  value;
             print('isAscending2 Changed: $isAscending2');

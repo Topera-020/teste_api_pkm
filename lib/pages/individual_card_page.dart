@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pokelens/data/database_helper.dart';
+import 'package:pokelens/data/extensions/database_tags.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/widgets/card_action_widget.dart';
@@ -21,13 +23,15 @@ class IndividualCardPage extends StatefulWidget {
 
 class IndividualCardPageState extends State<IndividualCardPage> {
   late List<bool> isSelected;
-  
+  late List<String> tags = []; // Adiciona uma lista para armazenar as tags
+
   @override
   void initState() {
     super.initState();
     isSelected = [widget.pokemonCard.tenho, widget.pokemonCard.preciso];
   }
-
+                       
+                        
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +86,15 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                       icon: Icons.check,
                       isSelected: widget.pokemonCard.tenho,
                       onPressed: () {
+                        //print('${widget.pokemonCard.tenho} ${widget.pokemonCard.id} 1');
+                        PokemonDatabaseHelper.instance.cardTagAssociate(
+                          associated: widget.pokemonCard.tenho,
+                          cardId: widget.pokemonCard.id,
+                          tagId: '1'
+                          );
+
+                      
+
                         setState(() {
                           widget.pokemonCard.tenho = !widget.pokemonCard.tenho;
                         });
@@ -97,6 +110,15 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                       icon: Icons.remove_red_eye,
                       isSelected: widget.pokemonCard.preciso,
                       onPressed: () {
+                        //print('${widget.pokemonCard.preciso} ${widget.pokemonCard.id} 2');
+                        PokemonDatabaseHelper.instance.cardTagAssociate(
+                          associated: widget.pokemonCard.preciso,
+                          cardId: widget.pokemonCard.id,
+                          tagId: '2'
+                          );
+
+                        
+
                         setState(() {
                           widget.pokemonCard.preciso = !widget.pokemonCard.preciso;
                         });

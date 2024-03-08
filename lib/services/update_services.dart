@@ -5,13 +5,13 @@ import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
 import 'package:pokelens/services/remote_services.dart';
-import 'package:pokelens/widgets/update/snack_bar_widget.dart';
+
 import 'package:pokelens/widgets/update/update_data_widget.dart';
 import 'package:sqflite/sqflite.dart';
 
-extension CollectionsExtension on UpdateDataWidgetState{
+extension CollectionsExtension on UpdateDataWidgetState{ 
   
-  Future<void> updateCollections(Function() setState) async {
+  Future<void> updateCollections() async {
     final List<Collection>? collections = await RemoteService().getCollections();
 
     if (collections != null) {
@@ -19,7 +19,7 @@ extension CollectionsExtension on UpdateDataWidgetState{
         try {
           await PokemonDatabaseHelper.instance.insertCollection(collection);
           progress++;
-          setState();
+          
         } catch (e) {
           // ignore: avoid_print
           print('Error adding collection: $e');
@@ -28,7 +28,10 @@ extension CollectionsExtension on UpdateDataWidgetState{
     }
   }
 
-  Future<void> updatePokemonCards(Function() setState) async {
+  Future<void> updatePokemonCards({
+    required Function(String name) showSnackBar, 
+    required Function() setState, 
+    }) async {
     List<Map<String, dynamic>> combinedCollectionList = await combineCollectionLists();
 
     for (Map<String, dynamic> collectionItem in combinedCollectionList) {
@@ -45,12 +48,10 @@ extension CollectionsExtension on UpdateDataWidgetState{
           
           for (PokemonCard card in cardsAPI) {
             progress++;
-            //print('$progress / $progressGoal  = ${progress/progressGoal}');
+            setState();
             try {
               await PokemonDatabaseHelper.instance.insertPokemonCard(card);
               countPokemonDB++;
-
-              if (mounted) {setState();}
 
             } catch (e) {
               if (e is DatabaseException && e.isUniqueConstraintError()) {
@@ -62,12 +63,13 @@ extension CollectionsExtension on UpdateDataWidgetState{
                 print('Erro ao adicionar cartão: $e');
               }
             }
-            showSnackBar('Coleção ${cardsAPI[0].collectionName} atualizada', context);
           }
+          showSnackBar(cardsAPI[0].collectionName);
+
 
         } else {
           progress += totalCardsDB;
-          print('$progress / $progressGoal  = ${progress/progressGoal}');
+          setState();
           // ignore: avoid_print
           print('Os cartões da coleção $collectionId já estão atualizados');
         }
@@ -116,5 +118,7 @@ extension CollectionsExtension on UpdateDataWidgetState{
     countPokemonDB = await PokemonDatabaseHelper.instance.countPokemon();
     countCollectionsDB = await PokemonDatabaseHelper.instance.countCollections();
     progressGoal = countCollectionsAPI + countPokemonAPI;
+    
   }
+  
 }

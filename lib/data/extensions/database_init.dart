@@ -2,11 +2,11 @@ import 'package:path/path.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
-extension PokemonCardExtension on PokemonDatabaseHelper{
+extension PokemonCardExtension on PokemonDatabaseHelper {
   Future<Database> initDatabase() async {
     // Obtém o caminho do banco de dados no dispositivo
     String path = join(await getDatabasesPath(), 'pokemon.db');
-    
+
     // Abre o banco de dados ou cria um novo se não existir
     return await openDatabase(
       path,
@@ -27,7 +27,7 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
             symbolImg TEXT,
             logoImg TEXT
           )
-        '''); 
+        ''');
 
         // Tabela para armazenar dados de cartas de Pokémon
         await db.execute('''
@@ -54,14 +54,15 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
         // Tabela para armazenar todas as tags individuais
         await db.execute('''
           CREATE TABLE tags(
-            id TEXT PRIMARY KEY,
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT
           )
         ''');
 
+        // Tabela para armazenar a associação entre cartas e tags
         await db.execute('''
           CREATE TABLE card_tag_association(
-            id INTEGER PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             card_id TEXT,
             tag_id TEXT,
             FOREIGN KEY (card_id) REFERENCES pokemon_cards(id),

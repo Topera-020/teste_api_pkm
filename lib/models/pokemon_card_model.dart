@@ -49,9 +49,12 @@ class PokemonCard {
   
   
   factory PokemonCard.fromMap(Map<String, dynamic> map) {
-    List<String> tags = map['tags']?.split(',') ?? [];
-    bool tenho = tags.contains('tenho');
-    bool preciso = tags.contains('preciso');
+    //print(map);
+
+    List<String> tags = map['tags']?.split(', ') ?? [];
+
+    bool tenho = tags.contains('Tenho');
+    bool preciso = tags.contains('Preciso');
 
     return PokemonCard(
       id: map['id'] ?? '',
@@ -79,7 +82,7 @@ class PokemonCard {
       tenho: tenho,
       preciso: preciso,
 
-      numberINT: map['numberINT'] ?? extractDigits(map['number']) ?? 0,
+      numberINT: map['numberINT'] ?? extractDigits(map['number'] ?? 0),
     );
   }
 

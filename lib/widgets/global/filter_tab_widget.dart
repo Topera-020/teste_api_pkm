@@ -16,10 +16,10 @@ class FiltersTab extends StatefulWidget {
   final bool isAscending1;
   final ValueChanged<bool> onPrimaryAscendingChanged;
   //Ordenação Secundária
-  final String secundarySortingOption;
-  final ValueChanged<String> onSecundarySortingChanged;  
+  final String secondaryOrderByClause;
+  final ValueChanged<String> onsecondarySortingChanged;  
   final bool isAscending2;
-  final ValueChanged<bool> onSecundaryAscendingChanged;
+  final ValueChanged<bool> onsecondaryAscendingChanged;
 
   const FiltersTab({
     super.key, 
@@ -30,10 +30,10 @@ class FiltersTab extends StatefulWidget {
     required this.onPrimarySortingChanged, 
     required this.isAscending1, 
     required this.onPrimaryAscendingChanged, 
-    required this.secundarySortingOption, 
-    required this.onSecundarySortingChanged, 
+    required this.secondaryOrderByClause, 
+    required this.onsecondarySortingChanged, 
     required this.isAscending2, 
-    required this.onSecundaryAscendingChanged,
+    required this.onsecondaryAscendingChanged,
   });
 
   @override
@@ -96,10 +96,10 @@ class FiltersTabState extends State<FiltersTab> {
             child: OrderingSelector(
               title: 'Critério de Ordenação Secundária:',
               optionsList: sortingList2,
-              selectedOption: widget.secundarySortingOption,
-              onSortingChanged: widget.onSecundarySortingChanged, 
+              selectedOption: widget.secondaryOrderByClause,
+              onSortingChanged: widget.onsecondarySortingChanged, 
               isAscending: widget.isAscending2, 
-              onAscendingChanged: widget.onSecundaryAscendingChanged,
+              onAscendingChanged: widget.onsecondaryAscendingChanged,
             ),
           ),
           

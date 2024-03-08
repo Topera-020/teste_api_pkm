@@ -40,7 +40,7 @@ class CardsPageState extends State<CardsPage> {
   List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista', 'Raridade', 'Tipo', 'Hp','Sub-categoria','Super-categoria'];
   
   late String primarySortingOption = sortingList[0];
-  late String secundarySortingOption = sortingList[1];
+  late String secondaryOrderByClause = sortingList[1];
 
   bool isAscending1 = true;
   bool isAscending2 = true;
@@ -48,30 +48,22 @@ class CardsPageState extends State<CardsPage> {
   Future<void> _updateCards( 
     //depois parâmetros para pesquisa específica
   ) async {
-    print('Loading...');
-
-    List<String>? collectionId_;
-    if (collectionId!= null){
-      collectionId_ = [collectionId!];
-    }
-
     try {
       List<PokemonCard>? updatedCards = await PokemonDatabaseHelper.instance.getPokemonCards(
-        collectionId: collectionId_,
+        collectionId: collectionId,
 
-        searchTerm: searchController.text,
 
         isAscending1: isAscending1,
         isAscending2: isAscending2,
 
         primaryOrderByClause: primarySortingOption,
-        secundaryOrderByClause: secundarySortingOption,
+        secondaryOrderByClause: secondaryOrderByClause,
       );
       
-      print(updatedCards!.map((e) => e.id));
       setState(() {
-        pokemonCards = updatedCards;
+        pokemonCards = updatedCards!;
       });
+      
     } catch (e) {
       // ignore: avoid_print
       print('Erro ao atualizar as cartas: $e');
@@ -89,7 +81,7 @@ class CardsPageState extends State<CardsPage> {
       if (collection != null) {
         sortingList.remove('Data');
         primarySortingOption = sortingList[0];
-        secundarySortingOption = sortingList[1];
+        secondaryOrderByClause = sortingList[1];
         collectionId = collection.id;
         title = collection.name;
       }
@@ -119,7 +111,7 @@ class CardsPageState extends State<CardsPage> {
     if (args != null) {
       collection = args['collection'] as Collection?;
       collectionId = collection?.id;
-      print('Page: Id da coleção: ${collection?.id} $collectionId');
+      //print('Page: Id da coleção: ${collection?.id} $collectionId');
     }
 
     return Scaffold(
@@ -149,7 +141,7 @@ class CardsPageState extends State<CardsPage> {
         onCardSizeChanged: (int size) {
           setState(() {
             selectedCardSize = size;
-            print('onCardSizeChanged - selectedCardSize: $selectedCardSize');
+            //print('onCardSizeChanged - selectedCardSize: $selectedCardSize');
             _updateCards();
           });
         }, 
@@ -160,12 +152,12 @@ class CardsPageState extends State<CardsPage> {
         onPrimarySortingChanged: (String? value) { 
           setState(() {
             primarySortingOption = value!;
-            if (secundarySortingOption == value){
+            if (secondaryOrderByClause == value){
               List<String> sortingList2 = List.from(sortingList);
               sortingList2.remove(primarySortingOption);
-              secundarySortingOption = sortingList2[0];
+              secondaryOrderByClause = sortingList2[0];
             }
-            print('onPrimarySortingChanged - primarySortingOption: $primarySortingOption');
+            //print('onPrimarySortingChanged - primarySortingOption: $primarySortingOption');
             _updateCards();
           });
         }, 
@@ -175,27 +167,27 @@ class CardsPageState extends State<CardsPage> {
         onPrimaryAscendingChanged: (bool value) {
           setState(() {
             isAscending1 =  value;
-            print('isAscending1 Changed: $isAscending1');
+            //print('isAscending1 Changed: $isAscending1');
             _updateCards();
           });
         }, 
         
         //Ordenação secundária
-        secundarySortingOption: secundarySortingOption,
-        onSecundarySortingChanged: (String? value) { 
+        secondaryOrderByClause: secondaryOrderByClause,
+        onsecondarySortingChanged: (String? value) { 
           setState(() {
-            secundarySortingOption = value!;
-            print('onSecundarySortingChanged - secundarySortingOption: $secundarySortingOption');
+            secondaryOrderByClause = value!;
+            //print('onsecondarySortingChanged - secondaryOrderByClause: $secondaryOrderByClause');
             _updateCards();
           });
         }, 
 
         //Ordenação secundária - sentido
         isAscending2: isAscending2, 
-        onSecundaryAscendingChanged: (bool value) {
+        onsecondaryAscendingChanged: (bool value) {
           setState(() {
             isAscending2 =  value;
-            print('isAscending2 Changed: $isAscending2');
+            //print('isAscending2 Changed: $isAscending2');
             _updateCards();
           });
         }, 
