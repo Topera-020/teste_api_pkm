@@ -50,8 +50,8 @@ class CardsPageState extends State<CardsPage> {
   ) async {
     try {
       List<PokemonCard>? updatedCards = await PokemonDatabaseHelper.instance.getPokemonCards(
+        searchTerm: searchController.text,
         collectionId: collectionId,
-
 
         isAscending1: isAscending1,
         isAscending2: isAscending2,
@@ -124,8 +124,10 @@ class CardsPageState extends State<CardsPage> {
           });
         },
         onSearchChanged: (value) {
+          // Pesquisa textual
           setState(() {
             searchController.text = value;
+            _updateCards();
           });
         },
         title: title,

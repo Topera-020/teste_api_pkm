@@ -52,6 +52,7 @@ class CardWidgetState extends State<CardWidget> {
                 ),
 
                 buildCardName(constraints, theme),
+                buildTags(constraints, theme),
                 buildInkWell(context),
               ],
             );
@@ -90,7 +91,7 @@ class CardWidgetState extends State<CardWidget> {
 
   Widget buildCardName(BoxConstraints constraints, ThemeData theme) {
     return Positioned(
-      top: constraints.maxHeight * 0.75,
+      top: constraints.maxHeight * 0.72,
       left: 0,
       right: 0,
       child: Container(
@@ -110,4 +111,42 @@ class CardWidgetState extends State<CardWidget> {
       ),
     );
   }
+
+
+  Widget buildTags(BoxConstraints constraints, ThemeData theme) {
+    return Positioned(
+      right: constraints.maxWidth * 0.01,
+      top: constraints.maxHeight * 0.03,
+      child: Column(
+        children: [
+
+          (widget.pokemonCard.tenho)
+              ? CircleAvatar(
+                  backgroundColor: Color.fromARGB(255, 20, 142, 24),
+                  radius: constraints.maxWidth * 0.1, // Ajuste conforme necessário
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: constraints.maxWidth * 0.2, // Ajuste conforme necessário
+                  ),
+                )
+              : Container(),
+          (widget.pokemonCard.preciso)
+              ? CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: constraints.maxWidth * 0.1, // Ajuste conforme necessário
+                  child: Icon(
+                    Icons.remove_red_eye,
+                    color: Colors.white,
+                    size: constraints.maxWidth * 0.15, // Ajuste conforme necessário
+                  ),
+                )
+              : Container(),
+          
+        ],
+      ),
+    );
+  }
+
+
 }

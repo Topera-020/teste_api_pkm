@@ -20,15 +20,19 @@ extension CollectionsExtension on PokemonDatabaseHelper {
 
   Future<List<Collection>> getCollections({
     List<String>? collectionId,
+
     String? nameSearch,
     String? seriesSearch,
     int? printedTotalSearch,
     int? totalSearch,
     String? ptcgoCodeSearch,
     String? releaseDateSearch,
+
     String? searchTerm,
+
     bool? isAscending1,
     bool? isAscending2,
+    
     String primaryOrderByClause = 'releaseDate',
     String secondaryOrderByClause = 'releaseDate',
   }) async {
@@ -43,16 +47,15 @@ extension CollectionsExtension on PokemonDatabaseHelper {
 
     if (searchTerm != null) {
       whereClause = '''
-        LOWER(name) LIKE ? 
-        OR LOWER(series) LIKE ? 
-        OR printedTotal = ? 
-        OR total = ? 
-        OR LOWER(ptcgoCode) LIKE ? 
-        OR LOWER(releaseDate) LIKE ?
-        ''';
+        LOWER(name) LIKE ? OR 
+        LOWER(series) LIKE ? OR 
+        printedTotal = ? OR 
+        total = ? OR 
+        LOWER(ptcgoCode) LIKE ? OR 
+        LOWER(releaseDate) LIKE ?
+      ''';
 
       whereArgs = List.filled(6, '%$searchTerm%');
-
     } else {
       if (nameSearch != null) {
         whereClause += 'LOWER(name) LIKE ? ';
