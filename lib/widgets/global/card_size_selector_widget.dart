@@ -13,15 +13,14 @@ class CardSizeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-              'Tamanho dos Cards',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-        ),
+        const Text(
+            'Tamanho dos Cards',
+            style: TextStyle(
+              fontSize: 16, // Adjust font size based on your design
+              fontWeight: FontWeight.bold,)
+          ),
           
         DropdownButton<int>(
           value: selectedCardSize ?? 3,

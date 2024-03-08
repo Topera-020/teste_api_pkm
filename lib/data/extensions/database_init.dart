@@ -59,17 +59,6 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
           )
         ''');
 
-        // Tabela para armazenar dados das listas de cartas do usuário
-        await db.execute('''
-          CREATE TABLE user_data(
-            id TEXT PRIMARY KEY,
-            tags TEXT,
-            tenho INTEGER,
-            preciso INTEGER,
-            FOREIGN KEY (id) REFERENCES pokemon_cards(id)
-          )
-        ''');
-
         await db.execute('''
           CREATE TABLE card_tag_association(
             id INTEGER PRIMARY KEY,

@@ -46,39 +46,189 @@ extension PokemonCardExtension on PokemonDatabaseHelper{
         return -1; // Retorna um valor que indica falha na inserção
       }
   }
+  
+  String mapOrderBy(String original) {
+    switch (original) {
+      case 'Data':
+        return 'releaseDate';
+      case 'Número':
+        return 'numberINT';
+      case 'Nome':
+        return 'name';
+      case '# Pokédex':
+        return 'nationalPokedexNumbers';
+      case 'Artista':
+        return 'artist';
+      case 'Raridade':
+        return 'rarity';
+      case 'Tipo':
+        return 'types';
+      case 'Hp':
+        return 'hp';
+      case 'Sub-categoria':
+        return 'subtypes';
+      case 'Super-Categoria':
+        return 'supertype';
 
-  // Método para obter todas as cartas de Pokémon do banco de dados
-  Future<List<PokemonCard>?> getPokemonCards({String? collectionId}) async {
+      default:
+        return original;
+    }
+  }
+
+  String getColumnPrefix(String columnName) {
+    switch (columnName) {
+      case 'collectionName':
+      case 'tags':
+        return columnName; // AS
+
+      case 'releaseDate':
+      case 'series':
+        return 'c.$columnName';
+
+      default:
+        return 'pc.$columnName';
+    }
+  }
+
+  Future<List<PokemonCard>?> getPokemonCards({
+    //collection id para Todas, vai receber mais coisa
+    //(nesse caso vai se tornar um campo de filtro individual)
+    List<String>? collectionId,
+
+    //campos de filtro individual
+    //listas
+    List<String>? seriesSearch,
+    List<String>? subclassSearch,
+    List<String>? tipoSearch,
+    List<String>? artistSearch,
+
+    //específico texto like
+    List<String>? nameSearch,
+
+    //numero
+    List<String>? numberSearch,
+    List<int>? pokedexSearch,
+    List<int>? hpSearch,
+    List<int>? retreatSearch,
+
+    //pesquisa geral
+    String? searchTerm,
+    String? filterColumn,
+    bool? isAscending1,
+    bool? isAscending2,
+
+    //fazer listas e case switch
+    String primaryOrderByClause = 'c.releaseDate',
+    String secundaryOrderByClause = 'pc.numberINT',
+  }) async {
     final db = await database;
-    List<Map<String, dynamic>> maps;
 
-    if (collectionId != null) {
-      maps = await db.rawQuery('''
-        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, GROUP_CONCAT(t.name) AS tags
-        FROM pokemon_cards pc
-        JOIN collections c ON pc.collectionId = c.id
-        LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
-        LEFT JOIN tags t ON cta.tag_id = t.id
-        WHERE pc.collectionId = ?
-        GROUP BY pc.id
-        ORDER BY pc.numberINT ASC
-      ''', [collectionId]);
+    primaryOrderByClause = mapOrderBy(primaryOrderByClause);
+    secundaryOrderByClause = mapOrderBy(secundaryOrderByClause);
+
+    // Monta a cláusula WHERE baseada no searchTerm e filterColumn
+    String whereClause = '';
+    List<dynamic> whereArgs = [];
+
+    if (searchTerm != null) {
+      whereClause = '''
+        LOWER(name) LIKE ? 
+        OR LOWER(supertype) LIKE ? 
+        OR LOWER(subtypes) LIKE ? 
+        OR hp LIKE ? 
+        OR LOWER(types) LIKE ? 
+        OR number = ? 
+        OR LOWER(artist) LIKE ? 
+        OR LOWER(rarity) LIKE ?
+        OR nationalPokedexNumbers = ? 
+        OR numberINT = ?
+        ''';
+
+      whereArgs = List.filled(6, '%$searchTerm%');
+
     } else {
-      maps = await db.rawQuery('''
-        SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, GROUP_CONCAT(t.name) AS tags
-        FROM pokemon_cards pc
-        JOIN collections c ON pc.collectionId = c.id
-        LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
-        LEFT JOIN tags t ON cta.tag_id = t.id
-        GROUP BY pc.id
-        ORDER BY pc.numberINT ASC
-      ''');
+      if (nameSearch != null) {
+        whereClause += 'LOWER(name) LIKE ? ';
+        whereArgs.add('%$nameSearch%');
+      }
+      if (seriesSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(series) LIKE ? ';
+        whereArgs.add('%$seriesSearch%');
+      }
+      if (seriesSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'printedTotal = ? ';
+        whereArgs.add(seriesSearch);
+      }
+      if (nameSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'total = ? ';
+        whereArgs.add(nameSearch);
+      }
+      if (numberSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(ptcgoCode) LIKE ? ';
+        whereArgs.add('%$numberSearch%');
+      }
+      if (pokedexSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$pokedexSearch%');
+      }
+      if (subclassSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$subclassSearch%');
+      }
+      if (tipoSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$tipoSearch%');
+      }
+      if (hpSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$hpSearch%');
+      }
+      if (artistSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$artistSearch%');
+      }
+      if (retreatSearch != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$retreatSearch%');
+      }
+      if (collectionId != null) {
+        whereClause += whereClause.isNotEmpty ? 'AND ' : '';
+        whereClause += 'LOWER(releaseDate) LIKE ? ';
+        whereArgs.add('%$collectionId%');
+      }
+
     }
 
-    return List.generate(maps.length, (i) {
-      PokemonCard card = PokemonCard.fromMap(maps[i]);
-      return card;
-    });
+    // Monta a cláusula ORDER BY baseada na ordenação e na direção
+    String orderClause = '$primaryOrderByClause ${isAscending1 != null ? (isAscending1 ? 'ASC' : 'DESC') : 'DESC'}, '
+        '$secundaryOrderByClause ${isAscending2 != null ? (isAscending2 ? 'ASC' : 'DESC') : 'DESC'}';
+
+    // Monta a consulta SQL final
+    String query = '''
+      SELECT pc.*, c.releaseDate, c.name AS collectionName, c.series, GROUP_CONCAT(t.name) AS tags
+      FROM pokemon_cards pc
+      JOIN collections c ON pc.collectionId = c.id
+      LEFT JOIN card_tag_association cta ON pc.id = cta.card_id
+      LEFT JOIN tags t ON cta.tag_id = t.id
+      ${whereClause.isNotEmpty ? 'WHERE $whereClause' : ''}
+      ORDER BY $primaryOrderByClause, $secundaryOrderByClause
+    ''';
+
+ 
+    // Executa a consulta e mapeia diretamente para objetos PokemonCard
+    List<Map<String, dynamic>> maps = await db.rawQuery(query, whereArgs);
+    return maps.map((map) => PokemonCard.fromMap(map)).toList();
   }
+  
 
 }

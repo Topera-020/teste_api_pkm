@@ -1,43 +1,59 @@
+
 import 'package:flutter/material.dart';
+
 import 'package:pokelens/widgets/global/card_size_selector_widget.dart';
+import 'package:pokelens/widgets/global/ordering_selector_widget.dart';
 
-// ignore: must_be_immutable
 class FiltersTab extends StatefulWidget {
-  final ValueChanged<String> onSortingChanged;
-  final ValueChanged<int> onOrderChanged;
+  //seletor do tamanho dos cards
+  final int selectedCardSize;
   final ValueChanged<int> onCardSizeChanged;
+  //Lista com possibilidades de ordenação
   final List<String> sortingList;
-  int selectedCardSize;
-  String sortingOption;
-  int selectedOrderIndex;
+  //Ordenação primária
+  final String primarySortingOption;
+  final ValueChanged<String> onPrimarySortingChanged;
+  final bool isAscending1;
+  final ValueChanged<bool> onPrimaryAscendingChanged;
+  //Ordenação Secundária
+  final String secundarySortingOption;
+  final ValueChanged<String> onSecundarySortingChanged;  
+  final bool isAscending2;
+  final ValueChanged<bool> onSecundaryAscendingChanged;
 
-
-  FiltersTab({
-    super.key,
-    required this.sortingList,
-    required this.onSortingChanged,
-    required this.onOrderChanged,
+  const FiltersTab({
+    super.key, 
     required this.selectedCardSize,
-    required this.onCardSizeChanged,
-    this.sortingOption = 'Name',
-    this.selectedOrderIndex = 0,
+    required this.onCardSizeChanged, 
+    required this.primarySortingOption, 
+    required this.sortingList, 
+    required this.onPrimarySortingChanged, 
+    required this.isAscending1, 
+    required this.onPrimaryAscendingChanged, 
+    required this.secundarySortingOption, 
+    required this.onSecundarySortingChanged, 
+    required this.isAscending2, 
+    required this.onSecundaryAscendingChanged,
   });
 
   @override
   FiltersTabState get createState => FiltersTabState();
+  
+  
 }
 
-class FiltersTabState extends State<FiltersTab> {  
-
+class FiltersTabState extends State<FiltersTab> {
   @override
   Widget build(BuildContext context) {
+    List<String> sortingList2 = List.from(widget.sortingList);
+    sortingList2.remove(widget.primarySortingOption);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 250, 45, 45),
+              color: Colors.red, // Use a theme color or a variable here
             ),
             child: Text(
               'Filtros',
@@ -47,77 +63,46 @@ class FiltersTabState extends State<FiltersTab> {
               ),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CardSizeSelector(
-                selectedCardSize: widget.selectedCardSize,
-                onChanged: (int? newSize) {
-                  setState(() {
-                    widget.selectedCardSize = newSize ?? widget.selectedCardSize;
-                  });
-                  widget.onCardSizeChanged(widget.selectedCardSize);
-                },
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
-                    child: Text(
-                      'Critério de Ordenação:',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
-                    child: DropdownButton<String>(
-                      value: widget.sortingOption,
-                      items: widget.sortingList.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? selectedValue) {
-                        if (selectedValue != null) {
-                          setState(() {
-                            widget.sortingOption = selectedValue;
-                          });
-                          widget.onSortingChanged(widget.sortingOption);
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Ordem:',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  ToggleButtons(
-                    isSelected: [widget.selectedOrderIndex == 0, widget.selectedOrderIndex == 1],
-                    onPressed: (int index) {
-                      setState(() {
-                        if (widget.selectedOrderIndex != index) {
-                          widget.selectedOrderIndex = index;
-                        }
-                      });
-                      widget.onOrderChanged(widget.selectedOrderIndex);
-                    },
-                    children: const <Widget>[
-                      Icon(Icons.arrow_upward),
-                      Icon(Icons.arrow_downward),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+
+          //CardSize sellection
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CardSizeSelector(
+              selectedCardSize: widget.selectedCardSize,
+              onChanged: (int? newSize) {
+                setState(() {
+                  widget.onCardSizeChanged(newSize!);
+                });
+              },
+            ),
           ),
+          
+          //ordenação primária
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OrderingSelector(
+              title: 'Critério de Ordenação Primária:',
+              optionsList: widget.sortingList,
+              selectedOption: widget.primarySortingOption,
+              onSortingChanged: widget.onPrimarySortingChanged, 
+              isAscending: widget.isAscending1, 
+              onAscendingChanged: widget.onPrimaryAscendingChanged,
+            ),
+          ),
+        
+          //ordenação Secundária
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OrderingSelector(
+              title: 'Critério de Ordenação Secundária:',
+              optionsList: sortingList2,
+              selectedOption: widget.secundarySortingOption,
+              onSortingChanged: widget.onSecundarySortingChanged, 
+              isAscending: widget.isAscending2, 
+              onAscendingChanged: widget.onSecundaryAscendingChanged,
+            ),
+          ),
+          
         ],
       ),
     );

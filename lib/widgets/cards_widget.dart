@@ -63,14 +63,18 @@ class CardWidgetState extends State<CardWidget> {
 
   InkWell buildInkWell(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        final collections = await PokemonDatabaseHelper.instance.getCollections(
+          collectionId: [widget.pokemonCard.collectionId],
+        );
+
         setState(() {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => IndividualCardPage(
                 pokemonCard: widget.pokemonCard,
-                collectionFuture: PokemonDatabaseHelper.instance.getCollectionById(widget.pokemonCard.collectionId),
+                collectionFuture: Future.value(collections.isNotEmpty ? collections.first : null),
               ),
             ),
           );
@@ -80,6 +84,7 @@ class CardWidgetState extends State<CardWidget> {
       highlightColor: Colors.transparent,
     );
   }
+
   
 
 

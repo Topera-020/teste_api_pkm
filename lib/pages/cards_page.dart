@@ -1,15 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:pokelens/data/extensions/database_filters.dart';
 import 'package:pokelens/data/extensions/database_pokemon_card.dart';
 import 'package:pokelens/models/collections_models.dart';
 import 'package:pokelens/models/pokemon_card_model.dart';
-
 import 'package:pokelens/widgets/global/app_bar_widget.dart';
 import 'package:pokelens/data/database_helper.dart';
 import 'package:pokelens/widgets/cards_widget.dart';
 import 'package:pokelens/widgets/global/drawer_widget.dart';
 import 'package:pokelens/widgets/global/filter_tab_widget.dart';
+//import 'package:pokelens/widgets/global/filter_tab_widget.dart';
 
 class CardsPage extends StatefulWidget {
   const CardsPage({super.key});
@@ -19,19 +18,65 @@ class CardsPage extends StatefulWidget {
 }
 
 class CardsPageState extends State<CardsPage> {
+  //Tamanho dos cards
   int selectedCardSize = 3;
+
+  //Lista de todas as cartas
   List<PokemonCard> pokemonCards = [];
   
+  //Título da página
   String title = 'Todas as cartas';
+  Collection? collection;
   String? collectionId;
 
+  // Controlador para o campo de pesquisa na barra de pesquisa
   TextEditingController searchController = TextEditingController();
+  // Nodo de foco para o campo de pesquisa
   final FocusNode _searchFocusNode = FocusNode();
+  // Variável para rastrear se a barra de pesquisa está expandida ou não
   bool isSearchExpanded = false;
-  int selectedOrderIndex = 0;
+
+  //Variaveis para ordenação
+  List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista', 'Raridade', 'Tipo', 'Hp','Sub-categoria','Super-categoria'];
   
-  List<String> sortingList = ['Data',  'Número', 'Nome', '# Pokédex', 'Artista'];
-  late String sortingOption = sortingList[0];
+  late String primarySortingOption = sortingList[0];
+  late String secundarySortingOption = sortingList[1];
+
+  bool isAscending1 = true;
+  bool isAscending2 = true;
+
+  Future<void> _updateCards( 
+    //depois parâmetros para pesquisa específica
+  ) async {
+    print('Loading...');
+
+    List<String>? collectionId_;
+    if (collectionId!= null){
+      collectionId_ = [collectionId!];
+    }
+
+    try {
+      List<PokemonCard>? updatedCards = await PokemonDatabaseHelper.instance.getPokemonCards(
+        collectionId: collectionId_,
+
+        searchTerm: searchController.text,
+
+        isAscending1: isAscending1,
+        isAscending2: isAscending2,
+
+        primaryOrderByClause: primarySortingOption,
+        secundaryOrderByClause: secundarySortingOption,
+      );
+      
+      print(updatedCards!.map((e) => e.id));
+      setState(() {
+        pokemonCards = updatedCards;
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print('Erro ao atualizar as cartas: $e');
+    }
+  }
 
   @override
   Future<void> didChangeDependencies() async {
@@ -43,15 +88,14 @@ class CardsPageState extends State<CardsPage> {
       final Collection? collection = args['collection'] as Collection?;
       if (collection != null) {
         sortingList.remove('Data');
-        sortingOption = sortingList[0];
+        primarySortingOption = sortingList[0];
+        secundarySortingOption = sortingList[1];
         collectionId = collection.id;
         title = collection.name;
       }
 
-     pokemonCards =(await PokemonDatabaseHelper.instance.getPokemonCards(
-        collectionId: collectionId,
-      ))!;
-
+      _updateCards();
+      setState(() {});
     }
   }
 
@@ -67,25 +111,15 @@ class CardsPageState extends State<CardsPage> {
     super.dispose();
   }
 
-  Future<void>  sortCards() async {
-      pokemonCards = (await PokemonDatabaseHelper.instance.getFilteredAndSortedPokemonCards(
-        collectionId: collectionId,
-        searchTerm: searchController.text,
-        isAscending: selectedOrderIndex == 1,
-      ))!;
-      
-      if (mounted) {setState(() { });}
-  }
-
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
     if (args != null) {
-      final Collection? collection = args['collection'] as Collection?;
+      collection = args['collection'] as Collection?;
       collectionId = collection?.id;
-      //print('Page: Id da coleção: ${collection?.id} $collectionId');
+      print('Page: Id da coleção: ${collection?.id} $collectionId');
     }
 
     return Scaffold(
@@ -105,30 +139,72 @@ class CardsPageState extends State<CardsPage> {
         title: title,
         searchFocusNode: _searchFocusNode,
       ),
+      
+      drawer: const DrawerWidget(),
+
       endDrawer: FiltersTab(
-        sortingList: sortingList,
-        sortingOption: sortingOption,
-        selectedOrderIndex: selectedOrderIndex,
+
+        //parâmetros do tamanho das carta
         selectedCardSize: selectedCardSize,
-        onSortingChanged: (value) {
-          setState(() {
-            sortingOption = value;
-            sortCards();
-          });
-        },
-        onOrderChanged: (index) {
-          setState(() {
-            selectedOrderIndex = index;
-            sortCards();
-          });
-        },
-        onCardSizeChanged: (size) {
+        onCardSizeChanged: (int size) {
           setState(() {
             selectedCardSize = size;
+            print('onCardSizeChanged - selectedCardSize: $selectedCardSize');
+            _updateCards();
           });
-        },
+        }, 
+        
+        //Ordenação primária
+        sortingList: sortingList, 
+        primarySortingOption: primarySortingOption,
+        onPrimarySortingChanged: (String? value) { 
+          setState(() {
+            primarySortingOption = value!;
+            if (secundarySortingOption == value){
+              List<String> sortingList2 = List.from(sortingList);
+              sortingList2.remove(primarySortingOption);
+              secundarySortingOption = sortingList2[0];
+            }
+            print('onPrimarySortingChanged - primarySortingOption: $primarySortingOption');
+            _updateCards();
+          });
+        }, 
+
+        //Ordenação Primária - sentido
+        isAscending1: isAscending1, 
+        onPrimaryAscendingChanged: (bool value) {
+          setState(() {
+            isAscending1 =  value;
+            print('isAscending1 Changed: $isAscending1');
+            _updateCards();
+          });
+        }, 
+        
+        //Ordenação secundária
+        secundarySortingOption: secundarySortingOption,
+        onSecundarySortingChanged: (String? value) { 
+          setState(() {
+            secundarySortingOption = value!;
+            print('onSecundarySortingChanged - secundarySortingOption: $secundarySortingOption');
+            _updateCards();
+          });
+        }, 
+
+        //Ordenação secundária - sentido
+        isAscending2: isAscending2, 
+        onSecundaryAscendingChanged: (bool value) {
+          setState(() {
+            isAscending2 =  value;
+            print('isAscending2 Changed: $isAscending2');
+            _updateCards();
+          });
+        }, 
+
       ),
-      drawer: const DrawerWidget(),
+
+
+
+
       body: GestureDetector(
         onTap: () {
           _searchFocusNode.unfocus();
