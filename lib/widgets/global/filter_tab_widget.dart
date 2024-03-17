@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pokelens/widgets/global/card_size_selector_widget.dart';
+import 'package:pokelens/widgets/global/filter_checkbox_menu.dart';
 import 'package:pokelens/widgets/global/ordering_selector_widget.dart';
 
 class FiltersTab extends StatefulWidget {
@@ -102,7 +103,10 @@ class FiltersTabState extends State<FiltersTab> {
               onAscendingChanged: widget.onsecondaryAscendingChanged,
             ),
           ),
-          
+            
+          ExpandableListView(
+            items: [Item(expandedValue: 'item 1', headerValue: 'item 1', isExpanded: true), Item(expandedValue: 'item 1', headerValue: 'item 1', isExpanded: false),Item(expandedValue: 'item 1', headerValue: 'item 1', isExpanded: false)],
+          ),
         ],
       ),
     );

@@ -77,6 +77,43 @@ extension PokemonCardExtension on PokemonDatabaseHelper {
             imageBase64 TEXT
           )
         ''');
+
+        await db.execute('''
+          CREATE TABLE pokedex_species (
+            species_id INT PRIMARY KEY,   
+            order NUMBER,         
+            pokemon_name TEXT,
+            generation_name TEXT,
+            is_baby NUMBER,
+            is_legendary NUMBER,
+            is_mythical NUMBER,
+            evolves_from_species_id NUMBER,
+            FOREIGN KEY (evolves_from_species_id) REFERENCES pokedex_species(species_id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE pokedex_varieties (
+            varieties_id TEXT PRIMARY KEY,
+            varieties_name TEXT,
+            species_id TEXT,
+            image_url TEXT,
+            is_default NUMBER,
+            is_shyne NUMBER,
+            is_female NUMBER,
+            FOREIGN KEY (species_id) REFERENCES pokedex_species(species_id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE pokedex_association (
+            id TEXT PRIMARY KEY,
+            card_id TEXT,
+            pokemon_id TEXT
+            FOREIGN KEY (card_id) REFERENCES pokemon_cards(id),
+            FOREIGN KEY (pokemon_id) REFERENCES pokedex_species(id)
+          )
+        ''');
       },
     );
   }

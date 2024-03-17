@@ -45,7 +45,7 @@ class CardsPageState extends State<CardsPage> {
   bool isAscending1 = true;
   bool isAscending2 = true;
 
-  Future<void> _updateCards( 
+  Future<void>  updateCards( 
     //depois parâmetros para pesquisa específica
   ) async {
     try {
@@ -86,7 +86,7 @@ class CardsPageState extends State<CardsPage> {
         title = collection.name;
       }
 
-      _updateCards();
+       updateCards();
       setState(() {});
     }
   }
@@ -127,7 +127,7 @@ class CardsPageState extends State<CardsPage> {
           // Pesquisa textual
           setState(() {
             searchController.text = value;
-            _updateCards();
+             updateCards();
           });
         },
         title: title,
@@ -144,7 +144,7 @@ class CardsPageState extends State<CardsPage> {
           setState(() {
             selectedCardSize = size;
             //print('onCardSizeChanged - selectedCardSize: $selectedCardSize');
-            _updateCards();
+             updateCards();
           });
         }, 
         
@@ -160,7 +160,7 @@ class CardsPageState extends State<CardsPage> {
               secondaryOrderByClause = sortingList2[0];
             }
             //print('onPrimarySortingChanged - primarySortingOption: $primarySortingOption');
-            _updateCards();
+             updateCards();
           });
         }, 
 
@@ -170,7 +170,7 @@ class CardsPageState extends State<CardsPage> {
           setState(() {
             isAscending1 =  value;
             //print('isAscending1 Changed: $isAscending1');
-            _updateCards();
+             updateCards();
           });
         }, 
         
@@ -180,7 +180,7 @@ class CardsPageState extends State<CardsPage> {
           setState(() {
             secondaryOrderByClause = value!;
             //print('onsecondarySortingChanged - secondaryOrderByClause: $secondaryOrderByClause');
-            _updateCards();
+             updateCards();
           });
         }, 
 
@@ -190,14 +190,11 @@ class CardsPageState extends State<CardsPage> {
           setState(() {
             isAscending2 =  value;
             //print('isAscending2 Changed: $isAscending2');
-            _updateCards();
+             updateCards();
           });
         }, 
 
       ),
-
-
-
 
       body: GestureDetector(
         onTap: () {
@@ -222,7 +219,7 @@ class CardsPageState extends State<CardsPage> {
                   itemCount: pokemonCards.length,
                   itemBuilder: (context, index) {
                     return CardWidget(
-                      pokemonCard: pokemonCards[index],
+                      pokemonCard: pokemonCards[index],                      
                     );
                   },
                 ),

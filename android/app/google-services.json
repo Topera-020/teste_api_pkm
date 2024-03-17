@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "77028012240",
+    "project_id": "pokelens-66bd0",
+    "storage_bucket": "pokelens-66bd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77028012240:android:5ea525161b7965d45e2ed5",
+        "android_client_info": {
+          "package_name": "com.example.teste_api"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd48lgQIQwd-UbyrYSnG_z2Bg21zk6BeA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

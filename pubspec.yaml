@@ -19,6 +19,9 @@ dependencies:
   css_colors: ^1.1.4
   path: ^1.8.3
 
+  firebase_core: ^1.10.0 # ou a versão mais recente disponível
+
+
 
 dev_dependencies:
   flutter_test:
@@ -26,7 +29,7 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   build_runner: ^2.3.3
   flutter_launcher_icons: "^0.13.1"
-  flutter_native_splash: ^2.3.11
+
 
 
 flutter:
@@ -50,9 +53,3 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/pokelens_icon.png"
-  
-flutter_native_splash:
-  color: "#049c9c"  # Cor de fundo da splash screen
-  image: "assets/pokelens_icon.png"  # Caminho da imagem da splash screen
-  android: true
-  ios: true

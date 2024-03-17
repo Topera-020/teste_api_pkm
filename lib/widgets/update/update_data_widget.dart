@@ -24,16 +24,21 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
   bool isUpdating = false;
   int progressGoal = 1;  
 
-  
-
   @override
   void initState() {
     super.initState();
+    // Inicie a contagem de dados no initState
     cauntData();
-    // ignore: avoid_print
-    mounted ? setState(() {}) : print('ERRO: unmounted');
     
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Chame countData novamente sempre que as dependências mudarem (como o BuildContext)
+    cauntData();
+  }
+
 
   Future<void> updateDB() async {
     progress = 0;
@@ -47,8 +52,7 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
     mounted ? setState(() {}) : print('ERRO: unmounted');
     
     await cauntData();
-    // ignore: avoid_print
-    mounted ? setState(() {}) : print('ERRO: unmounted');
+    
 
     await updatePokemonCards(
       showSnackBar: (String name){showSnackBar('Coleção $name atualizada', context);},
@@ -60,10 +64,9 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
 
     isUpdating = false;
     await cauntData();
-    // ignore: avoid_print
-    mounted ? setState(() {}) : print('ERRO: unmounted');
+    
   }
-
+  
   
   @override
   Widget build(BuildContext context) {
@@ -113,17 +116,17 @@ class UpdateDataWidgetState extends State<UpdateDataWidget> {
               : () async {
                   bool? confirmDelete = await showDeleteConfirmationDialog(context);
 
-                  if (confirmDelete!) {
-                    // Executar exclusão
-                    await PokemonDatabaseHelper.instance.removeAllCollections();
-                    await PokemonDatabaseHelper.instance.removeAllPokemonCards();
-                    await PokemonDatabaseHelper.instance.removeAllUserData();
+                  if (confirmDelete!=null) {
+                    if (confirmDelete) {
+                      // Executar exclusão
+                      await PokemonDatabaseHelper.instance.removeAllCollections();
+                      await PokemonDatabaseHelper.instance.removeAllPokemonCards();
+                      await PokemonDatabaseHelper.instance.removeAllUserData();
 
-                    await cauntData();
-                    // ignore: avoid_print
-                    mounted ? setState(() {}) : print('ERRO: unmounted');
-
-                    showSnackBar('Dados excluídos com sucesso!', context);
+                      await cauntData();
+                      
+                      showSnackBar('Dados excluídos com sucesso!', context);
+                    }
                   }
                 },
           child: const Text('Excluir dados gerais'),

@@ -118,6 +118,8 @@ extension CollectionsExtension on UpdateDataWidgetState{
     countPokemonDB = await PokemonDatabaseHelper.instance.countPokemon();
     countCollectionsDB = await PokemonDatabaseHelper.instance.countCollections();
     progressGoal = countCollectionsAPI + countPokemonAPI;
+    mounted ? setState(() {}) : print('ERRO: unmounted');
+
     
   }
   

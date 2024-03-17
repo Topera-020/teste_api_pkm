@@ -8,9 +8,11 @@ import 'package:pokelens/pages/individual_card_page.dart';
 class CardWidget extends StatefulWidget {
   final PokemonCard pokemonCard;
 
+
   const CardWidget({
     super.key,
     required this.pokemonCard,
+
   });
 
   @override
@@ -122,7 +124,7 @@ class CardWidgetState extends State<CardWidget> {
 
           (widget.pokemonCard.tenho)
               ? CircleAvatar(
-                  backgroundColor: Color.fromARGB(255, 20, 142, 24),
+                  backgroundColor: const Color.fromARGB(255, 20, 142, 24),
                   radius: constraints.maxWidth * 0.1, // Ajuste conforme necessário
                   child: Icon(
                     Icons.check,

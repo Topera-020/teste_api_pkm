@@ -11,10 +11,12 @@ class IndividualCardPage extends StatefulWidget {
   final PokemonCard pokemonCard;
   final Future<Collection?> collectionFuture;
 
+
   const IndividualCardPage({
     super.key,
     required this.pokemonCard,
-    required this.collectionFuture,
+    required this.collectionFuture, 
+
   });
 
   @override
@@ -24,9 +26,11 @@ class IndividualCardPage extends StatefulWidget {
 class IndividualCardPageState extends State<IndividualCardPage> {
   late List<bool> isSelected;
   late List<String> tags = []; // Adiciona uma lista para armazenar as tags
-
+  
+  
   @override
   void initState() {
+    print(widget.pokemonCard.toMap());
     super.initState();
     isSelected = [widget.pokemonCard.tenho, widget.pokemonCard.preciso];
   }
@@ -34,7 +38,9 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                         
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    
+    Scaffold(
       appBar: AppBar(
         title: Text(widget.pokemonCard.name),
       ),
@@ -43,7 +49,8 @@ class IndividualCardPageState extends State<IndividualCardPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: <Widget>[
+           
               // imagem da carta
               Container(
                 width: double.infinity,
@@ -93,8 +100,6 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                           tagId: '1'
                           );
 
-                      
-
                         setState(() {
                           widget.pokemonCard.tenho = !widget.pokemonCard.tenho;
                         });
@@ -128,10 +133,7 @@ class IndividualCardPageState extends State<IndividualCardPage> {
                 ],
               ),
 
-              InfoTextWidget(
-                title: 'número:',
-                text: widget.pokemonCard.numberINT.toString(),
-              ),
+              
               // informações
               InfoTextWidget(
                 title: 'Nome:',
